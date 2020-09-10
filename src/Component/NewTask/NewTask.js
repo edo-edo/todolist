@@ -2,7 +2,7 @@ import React from 'react';
 import { useHistory } from 'react-router-dom';
 import { useFormik } from 'formik';
 import PropTypes from 'prop-types';
-
+import * as Yup from 'yup';
 import {
   TextField, Checkbox, Typography, Grid, Button, FormControlLabel,
 } from '@material-ui/core/';
@@ -18,6 +18,16 @@ const NewTask = ({ onSubmit }) => {
       body: '',
       status: false,
     },
+    validationSchema: Yup.object().shape({
+      title: Yup.string()
+        .min(2, 'Too Short!')
+        .max(13, 'Too Long!')
+        .required(),
+      body: Yup.string()
+        .min(5, 'Too Short!')
+        .max(50, 'Too Long!')
+        .required()
+    }),
     onSubmit: values => {
       const task = { ...values, id: '' };
       const storageTask = JSON.parse(localStorage.getItem(LOCAL_STORAGE_KEY));
@@ -27,13 +37,6 @@ const NewTask = ({ onSubmit }) => {
       } else {
         const newId = storageTask.length;
         task.id = newId + 1;
-      }
-      if (storageTask) {
-        storageTask.push(task);
-        localStorage.setItem(LOCAL_STORAGE_KEY, JSON.stringify(storageTask));
-      } else {
-        const newArray = [task];
-        localStorage.setItem(LOCAL_STORAGE_KEY, JSON.stringify(newArray));
       }
       onSubmit(task);
       history.push('/');
@@ -57,6 +60,9 @@ const NewTask = ({ onSubmit }) => {
             value={formik.values.title}
             variant="outlined"
           />
+          {formik.touched.title && formik.errors.title && (
+            <div className={classes.Error}>{formik.errors.title}</div>
+          )}
         </Grid>
 
         <Grid item xs={8}>
@@ -69,6 +75,9 @@ const NewTask = ({ onSubmit }) => {
             rows={4}
             value={formik.values.body}
           />
+          {formik.touched.body && formik.errors.body && (
+            <div className={classes.Error}>{formik.errors.body}</div>
+          )}
         </Grid>
 
         <Grid item xs={12}>
