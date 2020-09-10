@@ -1,0 +1,17 @@
+body {
+    background-color: gray;
+}
+
+.Hello {
+    color: red;
+    font-size: 50px;
+}
+
+.Hello img {
+    width: 300px;
+    height: 400px;
+}
+
+.Hello button {
+    padding: 12px;
+}

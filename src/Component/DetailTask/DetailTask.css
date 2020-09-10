@@ -1,0 +1,11 @@
+.Root {
+  flex-grow: 1;
+  width: 60%;
+  margin: auto
+}
+
+.Paper{
+  padding: 36px;
+  height: 10px;
+}
+

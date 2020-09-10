@@ -1,0 +1,7 @@
+.Title {
+  cursor: pointer;
+}
+.TitleOverCross {
+  cursor: pointer;
+  text-decoration: line-through;
+}
