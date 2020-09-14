@@ -1,13 +1,18 @@
-import React from 'react';
+import React, { useContext } from 'react';
 import PropTypes from 'prop-types';
-import { useParams } from 'react-router-dom';
+import { useParams, useHistory } from 'react-router-dom';
 
 import {
   Button, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle
 } from '@material-ui/core';
 
-const Modal = ({ handleClose, onDelete }) => {
+import TaskContext from '../../../storage/TaskContext';
+import actionTypes from '../../../storage/actions';
+
+const Modal = ({ handleClose }) => {
   const { id } = useParams();
+  const history = useHistory();
+  const { dispatch } = useContext(TaskContext);
   return (
     <div>
       <Dialog
@@ -30,7 +35,14 @@ const Modal = ({ handleClose, onDelete }) => {
           <Button autoFocus onClick={handleClose} color="primary">
             Cancel
           </Button>
-          <Button onClick={() => onDelete(id)} variant="contained" color="secondary">
+          <Button
+            onClick={() => {
+              dispatch({ type: actionTypes.REMOVE_TASK, id });
+              history.push('/');
+            }}
+            variant="contained"
+            color="secondary"
+          >
             Delete
           </Button>
         </DialogActions>
@@ -41,7 +53,6 @@ const Modal = ({ handleClose, onDelete }) => {
 
 Modal.propTypes = {
   handleClose: PropTypes.func.isRequired,
-  onDelete: PropTypes.func.isRequired
 };
 
 export default Modal;

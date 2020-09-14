@@ -1,17 +1,19 @@
 import React from 'react';
 import { useParams } from 'react-router-dom';
 import { number } from 'prop-types';
-
 import {
-  Paper, Grid, Typography, Checkbox, FormControlLabel
+  Paper,
+  Grid,
+  Typography,
+  Checkbox,
+  FormControlLabel
 } from '@material-ui/core';
 
-import { LOCAL_STORAGE_KEY } from '../../hoc/StorageKey';
 import classes from './DetailTask.css';
 
 const DetailTask = () => {
   const { id } = useParams();
-  const storageTask = JSON.parse(localStorage.getItem(LOCAL_STORAGE_KEY));
+  const storageTask = JSON.parse(localStorage.getItem(process.env.LOCAL_STORAGE_KEY));
   const idToInt = parseInt(id, number);
   const task = storageTask.find(getTask => getTask.id === idToInt);
 
