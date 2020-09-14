@@ -1,10 +1,14 @@
 const path = require('path');
 const htmlWebpackPlugin = require('html-webpack-plugin');
 const miniCssExtractPlugin = require('mini-css-extract-plugin');
+const dotenv = require('dotenv-webpack');
 
 module.exports = {
   mode: 'development',
   entry: './src/index.js',
+  node: {
+    fs: "empty"
+},
   devServer: {
     contentBase: './dist',
     port: 5000,
@@ -22,6 +26,7 @@ module.exports = {
       filename: "./index.html"
     }),
     new miniCssExtractPlugin(),
+    new dotenv()
   ],
 
   module: {

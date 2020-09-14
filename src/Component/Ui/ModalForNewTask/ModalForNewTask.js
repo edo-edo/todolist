@@ -1,6 +1,5 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-
 import {
   Button,
   Dialog,
@@ -8,9 +7,9 @@ import {
   DialogContent
 } from '@material-ui/core';
 
-import NewTask from '../../NewTask/NewTask';
+import NewTask from './NewTask/NewTask';
 
-const ModalForNewTask = ({ onSubmit, handleClose }) => (
+const ModalForNewTask = ({ handleClose }) => (
   <div>
     <Dialog
       open
@@ -18,7 +17,7 @@ const ModalForNewTask = ({ onSubmit, handleClose }) => (
       aria-labelledby="draggable-dialog-title"
     >
       <DialogContent>
-        <NewTask onSubmit={onSubmit} />
+        <NewTask />
       </DialogContent>
 
       <DialogActions>
@@ -31,7 +30,6 @@ const ModalForNewTask = ({ onSubmit, handleClose }) => (
 );
 
 ModalForNewTask.propTypes = {
-  onSubmit: PropTypes.func.isRequired,
   handleClose: PropTypes.func.isRequired
 };
 

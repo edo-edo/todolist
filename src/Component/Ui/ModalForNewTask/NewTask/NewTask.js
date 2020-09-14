@@ -1,16 +1,22 @@
-import React from 'react';
+import React, { useContext } from 'react';
 import { useHistory } from 'react-router-dom';
 import { useFormik } from 'formik';
-import PropTypes from 'prop-types';
 import * as Yup from 'yup';
 import {
-  TextField, Checkbox, Typography, Grid, Button, FormControlLabel,
+  TextField,
+  Checkbox,
+  Typography,
+  Grid,
+  Button,
+  FormControlLabel,
 } from '@material-ui/core/';
 
-import { LOCAL_STORAGE_KEY } from '../../hoc/StorageKey';
 import classes from './NewTask.css';
+import TaskContext from '../../../../storage/TaskContext';
+import actionTypes from '../../../../storage/actions';
 
-const NewTask = ({ onSubmit }) => {
+const NewTask = () => {
+  const { dispatch } = useContext(TaskContext);
   const history = useHistory();
   const formik = useFormik({
     initialValues: {
@@ -29,16 +35,7 @@ const NewTask = ({ onSubmit }) => {
         .required()
     }),
     onSubmit: values => {
-      const task = { ...values, id: '' };
-      const storageTask = JSON.parse(localStorage.getItem(LOCAL_STORAGE_KEY));
-
-      if (storageTask === undefined || storageTask.length === 0) {
-        task.id = 0;
-      } else {
-        const newId = storageTask.length;
-        task.id = newId + 1;
-      }
-      onSubmit(task);
+      dispatch({ type: actionTypes.ADD_TASK, task: values });
       history.push('/');
     },
   });
@@ -107,10 +104,6 @@ const NewTask = ({ onSubmit }) => {
       </Grid>
     </div>
   );
-};
-
-NewTask.propTypes = {
-  onSubmit: PropTypes.func.isRequired
 };
 
 export default NewTask;
