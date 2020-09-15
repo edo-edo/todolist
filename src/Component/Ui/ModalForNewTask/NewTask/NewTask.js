@@ -1,5 +1,7 @@
-import React, { useContext } from 'react';
+import React from 'react';
 import { useHistory } from 'react-router-dom';
+import { connect } from 'react-redux';
+import PropTypes from 'prop-types';
 import { useFormik } from 'formik';
 import * as Yup from 'yup';
 import {
@@ -12,11 +14,9 @@ import {
 } from '@material-ui/core/';
 
 import classes from './NewTask.css';
-import TaskContext from '../../../../storage/TaskContext';
-import actionTypes from '../../../../storage/actions';
+import * as actionTypes from '../../../../storage/constant';
 
-const NewTask = () => {
-  const { dispatch } = useContext(TaskContext);
+const NewTask = ({ onAddTask }) => {
   const history = useHistory();
   const formik = useFormik({
     initialValues: {
@@ -35,7 +35,7 @@ const NewTask = () => {
         .required()
     }),
     onSubmit: values => {
-      dispatch({ type: actionTypes.ADD_TASK, task: values });
+      onAddTask(values);
       history.push('/');
     },
   });
@@ -89,7 +89,6 @@ const NewTask = () => {
             label="Status"
           />
         </Grid>
-
         <Grid item xs={12}>
           <Button
             onClick={formik.handleSubmit}
@@ -106,4 +105,12 @@ const NewTask = () => {
   );
 };
 
-export default NewTask;
+NewTask.propTypes = {
+  onAddTask: PropTypes.func.isRequired
+};
+
+const mapDispatchToProps = dispatch => ({
+  onAddTask: task => dispatch({ type: actionTypes.ADD_TASK, payload: { task } })
+});
+
+export default connect(null, mapDispatchToProps)(NewTask);

@@ -1,4 +1,5 @@
-import React, { useContext } from 'react';
+import React from 'react';
+import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
 import { useParams, useHistory } from 'react-router-dom';
 
@@ -6,13 +7,11 @@ import {
   Button, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle
 } from '@material-ui/core';
 
-import TaskContext from '../../../storage/TaskContext';
-import actionTypes from '../../../storage/actions';
+import * as actionTypes from '../../../storage/constant';
 
-const Modal = ({ handleClose }) => {
+const Modal = ({ handleClose, onRemoveTask }) => {
   const { id } = useParams();
   const history = useHistory();
-  const { dispatch } = useContext(TaskContext);
   return (
     <div>
       <Dialog
@@ -37,7 +36,7 @@ const Modal = ({ handleClose }) => {
           </Button>
           <Button
             onClick={() => {
-              dispatch({ type: actionTypes.REMOVE_TASK, id });
+              onRemoveTask(id);
               history.push('/');
             }}
             variant="contained"
@@ -52,7 +51,12 @@ const Modal = ({ handleClose }) => {
 };
 
 Modal.propTypes = {
+  onRemoveTask: PropTypes.func.isRequired,
   handleClose: PropTypes.func.isRequired,
 };
 
-export default Modal;
+const mapDispatchToProps = dispatch => ({
+  onRemoveTask: id => dispatch({ type: actionTypes.REMOVE_TASK, payload: { id } })
+});
+
+export default connect(null, mapDispatchToProps)(Modal);

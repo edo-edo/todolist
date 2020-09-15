@@ -1,6 +1,7 @@
-import React, { useContext } from 'react';
+import React from 'react';
 import PropTypes from 'prop-types';
 import classNames from 'classnames';
+import { connect } from 'react-redux';
 import {
   Button,
   TableRow,
@@ -10,14 +11,11 @@ import {
 } from '@material-ui/core';
 
 import classes from './Task.css';
-import TaskContext from '../../storage/TaskContext';
-import actionTypes from '../../storage/actions';
+import * as actionTypes from '../../storage/constant';
 
 const Task = ({
-  id, title, onTitle, onClick, status
+  id, title, onTitle, onClick, status, onCheck
 }) => {
-  const { dispatch } = useContext(TaskContext);
-
   const styleTitle = classNames(classes.Title, {
     [classes.TitleOverCross]: status
   });
@@ -29,7 +27,7 @@ const Task = ({
           checked={status}
           color="primary"
           inputProps={{ 'aria-label': 'secondary checkbox' }}
-          onChange={() => dispatch({ type: actionTypes.ON_CHECK, id })}
+          onChange={() => onCheck(id)}
         />
       </TableCell>
 
@@ -49,8 +47,13 @@ Task.propTypes = {
   id: PropTypes.number.isRequired,
   title: PropTypes.string.isRequired,
   status: PropTypes.bool.isRequired,
+  onCheck: PropTypes.func.isRequired,
   onClick: PropTypes.func.isRequired,
   onTitle: PropTypes.func.isRequired,
 };
 
-export default Task;
+const mapDispatchToProps = dispatch => ({
+  onCheck: id => dispatch({ type: actionTypes.ON_CHECK, payload: { id } })
+});
+
+export default connect(null, mapDispatchToProps)(Task);
