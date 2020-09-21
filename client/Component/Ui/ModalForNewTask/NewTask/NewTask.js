@@ -14,7 +14,7 @@ import {
 } from '@material-ui/core/';
 
 import classes from './NewTask.css';
-import * as actionTypes from '../../../../storage/constant';
+import { addTaskAction } from '../../../../storage/actions';
 
 const NewTask = ({ onAddTask }) => {
   const history = useHistory();
@@ -110,7 +110,7 @@ NewTask.propTypes = {
 };
 
 const mapDispatchToProps = dispatch => ({
-  onAddTask: task => dispatch({ type: actionTypes.ADD_TASK, payload: { task } })
+  onAddTask: task => dispatch(addTaskAction(task))
 });
 
 export default connect(null, mapDispatchToProps)(NewTask);

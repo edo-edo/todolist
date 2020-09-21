@@ -7,7 +7,7 @@ import {
   Button, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle
 } from '@material-ui/core';
 
-import * as actionTypes from '../../../storage/constant';
+import { removeTaskAction } from '../../../storage/actions';
 
 const Modal = ({ handleClose, onRemoveTask }) => {
   const { id } = useParams();
@@ -56,7 +56,7 @@ Modal.propTypes = {
 };
 
 const mapDispatchToProps = dispatch => ({
-  onRemoveTask: id => dispatch({ type: actionTypes.REMOVE_TASK, payload: { id } })
+  onRemoveTask: id => dispatch(removeTaskAction(id))
 });
 
 export default connect(null, mapDispatchToProps)(Modal);

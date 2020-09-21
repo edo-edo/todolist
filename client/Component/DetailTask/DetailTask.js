@@ -1,24 +1,19 @@
 import React from 'react';
-import { useParams } from 'react-router-dom';
-import { number } from 'prop-types';
+import { connect } from 'react-redux';
+import PropTypes from 'prop-types';
 import {
   Paper,
   Grid,
   Typography,
   Checkbox,
-  FormControlLabel
 } from '@material-ui/core';
 
+import { boolean } from 'yup';
 import classes from './DetailTask.css';
 
-const DetailTask = () => {
-  const { id } = useParams();
-  const storageTask = JSON.parse(localStorage.getItem(process.env.LOCAL_STORAGE_KEY));
-  const idToInt = parseInt(id, number);
-  const task = storageTask.find(getTask => getTask.id === idToInt);
-
-  if (!task) {
-    return <Typography align="center" component="h1"> Task not found</Typography>;
+const DetailTask = ({ task }) => {
+  if (Object.keys(task).length === 0) {
+    return <Typography align="center" component="h1">Task not found</Typography>;
   }
   return (
     <div className={classes.Root}>
@@ -28,24 +23,18 @@ const DetailTask = () => {
           <Paper className={classes.Paper}>
             <Typography component="h1">
               Id:
-              {task.id}
+              {task._id}
             </Typography>
           </Paper>
         </Grid>
 
         <Grid item xs={7}>
           <Paper className={classes.Paper}>
-            <FormControlLabel
-              control={
-                (
-                  <Checkbox
-                    checked={task.status}
-                    color="secondary"
-                  />
-                  )
-                }
-              label="Status"
+            <Checkbox
+              checked={task.status}
+              color="secondary"
             />
+
           </Paper>
         </Grid>
 
@@ -69,5 +58,12 @@ const DetailTask = () => {
     </div>
   );
 };
+DetailTask.propTypes = {
+  task: PropTypes.objectOf(boolean, String, String, String).isRequired
+};
 
-export default DetailTask;
+const mapStateToProps = state => ({
+  task: state.task
+});
+
+export default connect(mapStateToProps)(DetailTask);

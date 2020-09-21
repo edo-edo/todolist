@@ -20,13 +20,14 @@ import {
 import Task from './Task/Task';
 import ModalForDelete from '../Component/Ui/ModalForDelete/ModalForDelete';
 import ModalForNewTask from '../Component/Ui/ModalForNewTask/ModalForNewTask';
+import { fetchTasksAction, fetchTaskAction } from '../storage/actions';
 
-const Tasks = ({ tasks }) => {
+const Tasks = ({ tasks, fetchTasks, fetchTask }) => {
   const history = useHistory();
 
   useEffect(() => {
-    localStorage.setItem(process.env.LOCAL_STORAGE_KEY, JSON.stringify(tasks));
-  }, [tasks]);
+    fetchTasks();
+  }, []);
 
   return (
     <div>
@@ -46,13 +47,16 @@ const Tasks = ({ tasks }) => {
           <TableBody>
             {tasks.map(task => (
               <Task
-                key={task.id}
-                id={task.id}
+                key={task._id}
+                id={task._id}
                 title={task.title}
                 body={task.body}
                 status={task.status}
-                onClick={() => history.push(`/delete/${task.id}`)}
-                onTitle={() => history.push(`/tasks/${task.id}`)}
+                onClick={() => history.push(`/delete/${task._id}`)}
+                onTitle={() => {
+                  fetchTask(task._id);
+                  history.push(`/tasks/${task._id}`);
+                }}
               />
             )) }
           </TableBody>
@@ -82,11 +86,16 @@ const Tasks = ({ tasks }) => {
 };
 
 Tasks.propTypes = {
-  tasks: PropTypes.arrayOf(PropTypes.object).isRequired
+  tasks: PropTypes.arrayOf(PropTypes.object).isRequired,
+  fetchTasks: PropTypes.func.isRequired,
+  fetchTask: PropTypes.func.isRequired
 };
 
 const mapStateToProps = state => ({
-  tasks: state
+  tasks: state.tasks
 });
-
-export default connect(mapStateToProps)(Tasks);
+const mapDispatchToProps = dispatch => ({
+  fetchTasks: () => dispatch(fetchTasksAction()),
+  fetchTask: id => dispatch(fetchTaskAction(id))
+});
+export default connect(mapStateToProps, mapDispatchToProps)(Tasks);

@@ -11,7 +11,7 @@ import {
 } from '@material-ui/core';
 
 import classes from './Task.css';
-import * as actionTypes from '../../storage/constant';
+import { onCheckAction } from '../../storage/actions';
 
 const Task = ({
   id, title, onTitle, onClick, status, onCheck
@@ -19,7 +19,6 @@ const Task = ({
   const styleTitle = classNames(classes.Title, {
     [classes.TitleOverCross]: status
   });
-
   return (
     <TableRow>
       <TableCell component="th" scope="row">
@@ -27,7 +26,7 @@ const Task = ({
           checked={status}
           color="primary"
           inputProps={{ 'aria-label': 'secondary checkbox' }}
-          onChange={() => onCheck(id)}
+          onChange={() => onCheck(id, status)}
         />
       </TableCell>
 
@@ -44,7 +43,7 @@ const Task = ({
 };
 
 Task.propTypes = {
-  id: PropTypes.number.isRequired,
+  id: PropTypes.string.isRequired,
   title: PropTypes.string.isRequired,
   status: PropTypes.bool.isRequired,
   onCheck: PropTypes.func.isRequired,
@@ -53,7 +52,7 @@ Task.propTypes = {
 };
 
 const mapDispatchToProps = dispatch => ({
-  onCheck: id => dispatch({ type: actionTypes.ON_CHECK, payload: { id } })
+  onCheck: (id, status) => dispatch(onCheckAction(id, status))
 });
 
 export default connect(null, mapDispatchToProps)(Task);
