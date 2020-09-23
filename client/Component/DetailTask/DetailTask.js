@@ -1,5 +1,6 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { connect } from 'react-redux';
+import { useParams } from 'react-router-dom';
 import PropTypes from 'prop-types';
 import {
   Paper,
@@ -8,15 +9,29 @@ import {
   Checkbox,
 } from '@material-ui/core';
 
-import { boolean } from 'yup';
 import classes from './DetailTask.css';
+import * as actionTypes from '../../storage/constant';
+import ModalForError from '../Ui/ModalForError/ModalForError';
+import Spinner from '../Ui/Spinner/Spinner';
 
-const DetailTask = ({ task }) => {
-  if (Object.keys(task).length === 0) {
-    return <Typography align="center" component="h1">Task not found</Typography>;
+const DetailTask = ({
+  task, fetchTask, loading, error
+}) => {
+  const { id } = useParams();
+  useEffect(() => {
+    fetchTask(id);
+  }, []);
+
+  if (loading) {
+    return <Spinner />;
   }
   return (
     <div className={classes.Root}>
+      {
+        error.length !== 0 && (
+          <ModalForError message={error} />
+        )
+      }
       <Grid container spacing={5}>
 
         <Grid item xs={7}>
@@ -59,11 +74,19 @@ const DetailTask = ({ task }) => {
   );
 };
 DetailTask.propTypes = {
-  task: PropTypes.objectOf(boolean, String, String, String).isRequired
+  task: PropTypes.objectOf(Boolean, String, String, String).isRequired,
+  loading: PropTypes.bool.isRequired,
+  error: PropTypes.string.isRequired,
+  fetchTask: PropTypes.func.isRequired
 };
 
 const mapStateToProps = state => ({
-  task: state.task
+  task: state.task,
+  loading: state.loading,
+  error: state.error
+});
+const mapDispatchToProps = dispatch => ({
+  fetchTask: id => dispatch({ type: actionTypes.FETCH_TASK_START, payload: { id } }),
 });
 
-export default connect(mapStateToProps)(DetailTask);
+export default connect(mapStateToProps, mapDispatchToProps)(DetailTask);

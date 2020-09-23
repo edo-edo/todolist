@@ -11,7 +11,7 @@ import {
 } from '@material-ui/core';
 
 import classes from './Task.css';
-import { onCheckAction } from '../../storage/actions';
+import * as actionTypes from '../../storage/constant';
 
 const Task = ({
   id, title, onTitle, onClick, status, onCheck
@@ -52,7 +52,7 @@ Task.propTypes = {
 };
 
 const mapDispatchToProps = dispatch => ({
-  onCheck: (id, status) => dispatch(onCheckAction(id, status))
+  onCheck: (id, status) => dispatch({ type: actionTypes.ON_CHECK_START, payload: { id, status } })
 });
 
 export default connect(null, mapDispatchToProps)(Task);

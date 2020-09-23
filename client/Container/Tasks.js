@@ -20,20 +20,33 @@ import {
 import Task from './Task/Task';
 import ModalForDelete from '../Component/Ui/ModalForDelete/ModalForDelete';
 import ModalForNewTask from '../Component/Ui/ModalForNewTask/ModalForNewTask';
-import { fetchTasksAction, fetchTaskAction } from '../storage/actions';
+import ModalForError from '../Component/Ui/ModalForError/ModalForError';
+import * as actionTypes from '../storage/constant';
+import Spinner from '../Component/Ui/Spinner/Spinner';
 
-const Tasks = ({ tasks, fetchTasks, fetchTask }) => {
+const Tasks = ({
+  tasks, loading, fetchTasks, error
+}) => {
   const history = useHistory();
 
   useEffect(() => {
     fetchTasks();
   }, []);
 
+  if (loading) {
+    return <Spinner />;
+  }
+
   return (
     <div>
-      {tasks.length === 0 && (
+      {tasks.length === 0 && error.length === 0 && (
         <Typography align="center" component="h1"> You do not have task</Typography>
       )}
+      {
+        error.length !== 0 && (
+          <ModalForError message={error} />
+        )
+      }
       <TableContainer>
         <Table>
           <TableHead>
@@ -53,10 +66,7 @@ const Tasks = ({ tasks, fetchTasks, fetchTask }) => {
                 body={task.body}
                 status={task.status}
                 onClick={() => history.push(`/delete/${task._id}`)}
-                onTitle={() => {
-                  fetchTask(task._id);
-                  history.push(`/tasks/${task._id}`);
-                }}
+                onTitle={() => history.push(`/tasks/${task._id}`)}
               />
             )) }
           </TableBody>
@@ -87,15 +97,17 @@ const Tasks = ({ tasks, fetchTasks, fetchTask }) => {
 
 Tasks.propTypes = {
   tasks: PropTypes.arrayOf(PropTypes.object).isRequired,
-  fetchTasks: PropTypes.func.isRequired,
-  fetchTask: PropTypes.func.isRequired
+  loading: PropTypes.bool.isRequired,
+  error: PropTypes.string.isRequired,
+  fetchTasks: PropTypes.func.isRequired
 };
 
 const mapStateToProps = state => ({
-  tasks: state.tasks
+  tasks: state.tasks,
+  loading: state.loading,
+  error: state.error
 });
 const mapDispatchToProps = dispatch => ({
-  fetchTasks: () => dispatch(fetchTasksAction()),
-  fetchTask: id => dispatch(fetchTaskAction(id))
+  fetchTasks: () => dispatch({ type: actionTypes.FETCH_TASKS_START }),
 });
 export default connect(mapStateToProps, mapDispatchToProps)(Tasks);

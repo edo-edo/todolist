@@ -1,5 +1,19 @@
-export const FETCH_TASKS = 'FETCH_TASKS';
-export const FETCH_TASK = 'FETCH_TASK';
-export const ADD_TASK = 'ADD_TASK';
-export const REMOVE_TASK = 'REMOVE_TASK';
-export const ON_CHECK = 'ON_CHECK';
+export const FETCH_TASKS_START = 'FETCH_TASKS_START';
+export const FETCH_TASKS_FAIL = 'FETCH_TASKS_FAIL';
+export const FETCH_TASKS_SUCCESS = 'FETCH_TASKS_SUCCESS';
+
+export const FETCH_TASK_START = 'FETCH_TASK_START';
+export const FETCH_TASK_FAIL = 'FETCH_TASK_FAIL';
+export const FETCH_TASK_SUCCESS = 'FETCH_TASK_SUCCESS';
+
+export const ADD_TASK_START = 'ADD_TASK_START';
+export const ADD_TASK_FAIL = 'ADD_TASK_FAIL';
+export const ADD_TASK_SUCCESS = 'ADD_TASK_SECCESS';
+
+export const REMOVE_TASK_START = 'REMOVE_TASK_START';
+export const REMOVE_TASK_FAIL = 'REMOVE_TASK_FAIL';
+export const REMOVE_TASK_SUCCESS = 'REMOVE_TASK_SUCCESS';
+
+export const ON_CHECK_START = 'ON_CHECK_START';
+export const ON_CHECK_FAIL = 'ON_CHECK_FAIL';
+export const ON_CHECK_SUCCESS = 'ON_CHECK_SUCCESS';

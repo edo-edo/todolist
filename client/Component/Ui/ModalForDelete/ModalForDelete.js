@@ -4,10 +4,15 @@ import PropTypes from 'prop-types';
 import { useParams, useHistory } from 'react-router-dom';
 
 import {
-  Button, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle
+  Button,
+  Dialog,
+  DialogActions,
+  DialogContent,
+  DialogContentText,
+  DialogTitle
 } from '@material-ui/core';
 
-import { removeTaskAction } from '../../../storage/actions';
+import * as actionTypes from '../../../storage/constant';
 
 const Modal = ({ handleClose, onRemoveTask }) => {
   const { id } = useParams();
@@ -56,7 +61,7 @@ Modal.propTypes = {
 };
 
 const mapDispatchToProps = dispatch => ({
-  onRemoveTask: id => dispatch(removeTaskAction(id))
+  onRemoveTask: id => dispatch({ type: actionTypes.REMOVE_TASK_START, payload: { id } })
 });
 
 export default connect(null, mapDispatchToProps)(Modal);
