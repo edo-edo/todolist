@@ -3,7 +3,7 @@ import * as actionTypes from './constant';
 const initialState = {
   tasks: [],
   task: {},
-  loading: true,
+  loading: false,
   error: ''
 };
 

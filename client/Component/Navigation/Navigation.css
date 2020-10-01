@@ -1,0 +1,13 @@
+.Nav button {
+  text-transform: none;
+}
+.Nav button:hover {
+  color: red;
+}
+.Toolbar {
+  text-align: right;
+}
+
+.AppBar {
+  margin-bottom: 20px;
+}

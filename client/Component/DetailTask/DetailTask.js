@@ -80,7 +80,7 @@ DetailTask.propTypes = {
   fetchTask: PropTypes.func.isRequired
 };
 
-const mapStateToProps = state => ({
+const mapStateToProps = ({ Reducer: state }) => ({
   task: state.task,
   loading: state.loading,
   error: state.error

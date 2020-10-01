@@ -1,0 +1,13 @@
+.LogIn {
+  flex-grow: 1;
+  width: 80%;
+  margin: auto;
+}
+.MainGrid {
+  padding-left: 12;
+  border: 1px solid #eee;
+  box-shadow: 0 2px 3px #ccc;    
+}
+.Error {
+  color: red;
+}

@@ -102,7 +102,7 @@ Tasks.propTypes = {
   fetchTasks: PropTypes.func.isRequired
 };
 
-const mapStateToProps = state => ({
+const mapStateToProps = ({ Reducer: state }) => ({
   tasks: state.tasks,
   loading: state.loading,
   error: state.error

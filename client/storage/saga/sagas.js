@@ -6,7 +6,9 @@ import {
   fetchTask,
   addTask,
   removeTask,
-  onCheckTask
+  onCheckTask,
+  signUpUser,
+  logInUser
 } from './sagaActions';
 
 function* rootSaga() {
@@ -15,6 +17,8 @@ function* rootSaga() {
   yield takeLatest(actionTypes.ADD_TASK_START, addTask);
   yield takeLatest(actionTypes.REMOVE_TASK_START, removeTask);
   yield takeLatest(actionTypes.ON_CHECK_START, onCheckTask);
+  yield takeLatest(actionTypes.SIGN_UP_START, signUpUser);
+  yield takeLatest(actionTypes.LOG_IN_START, logInUser);
 }
 
 export default rootSaga;

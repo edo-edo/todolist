@@ -7,17 +7,16 @@ import {
   DialogContent
 } from '@material-ui/core';
 
-import NewTask from './NewTask/NewTask';
+import LogIn from './LogIn/LogIn';
 
-const ModalForNewTask = ({ handleClose }) => (
+const ModalForLogIn = ({ open, handleClose }) => (
   <div>
     <Dialog
-      open
+      open={open}
       onClose={handleClose}
-      aria-labelledby="draggable-dialog-title"
     >
       <DialogContent dividers>
-        <NewTask />
+        <LogIn handleClose={handleClose} />
       </DialogContent>
 
       <DialogActions>
@@ -29,8 +28,9 @@ const ModalForNewTask = ({ handleClose }) => (
   </div>
 );
 
-ModalForNewTask.propTypes = {
+ModalForLogIn.propTypes = {
+  open: PropTypes.bool.isRequired,
   handleClose: PropTypes.func.isRequired
 };
 
-export default ModalForNewTask;
+export default ModalForLogIn;

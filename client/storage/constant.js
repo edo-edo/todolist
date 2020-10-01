@@ -17,3 +17,17 @@ export const REMOVE_TASK_SUCCESS = 'REMOVE_TASK_SUCCESS';
 export const ON_CHECK_START = 'ON_CHECK_START';
 export const ON_CHECK_FAIL = 'ON_CHECK_FAIL';
 export const ON_CHECK_SUCCESS = 'ON_CHECK_SUCCESS';
+
+export const SIGN_UP_START = 'SIGN_UP_START';
+export const SIGN_UP_FAIL = 'SIGN_UP_FAIL';
+export const SIGN_UP_SUCCESS = 'SIGN_UP_SUCCESS';
+
+export const LOG_IN_START = 'LOG_IN_START';
+export const LOG_IN_FAIL = 'LOG_IN_FAIL';
+export const LOG_IN_SUCCESS = 'LOG_IN_SUCCESS';
+
+export const CLEAR_ERROR = 'CLEAR_ERROR';
+
+export const LOG_OUT = 'LOG_OUT';
+
+export const SET_CURRENT_USER = 'SET_CURRENT_USER';

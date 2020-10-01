@@ -32,7 +32,8 @@ const NewTask = ({ onAddTask }) => {
       body: Yup.string()
         .min(5, 'Too Short!')
         .max(50, 'Too Long!')
-        .required()
+        .required(),
+      status: Yup.boolean()
     }),
     onSubmit: values => {
       onAddTask(values);
