@@ -27,6 +27,7 @@ export const LOG_IN_FAIL = 'LOG_IN_FAIL';
 export const LOG_IN_SUCCESS = 'LOG_IN_SUCCESS';
 
 export const CLEAR_ERROR = 'CLEAR_ERROR';
+export const CLEAR_TASK_ERROR = 'CLEAR_TASK_ERROR';
 
 export const LOG_OUT = 'LOG_OUT';
 

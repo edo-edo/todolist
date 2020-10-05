@@ -5,6 +5,7 @@ const initialState = {
   signUpError: '',
   logInError: '',
   isAuthenticated: false,
+  authError: false,
   user: {}
 };
 
@@ -19,16 +20,17 @@ const userReducer = (state = initialState, action) => {
     case actionTypes.SIGN_UP_SUCCESS: {
       return {
         ...state,
-        signUpError: 'done',
+        authError: true,
         isAuthenticated: true,
-        user: action.payload.user
+        user: setAuthToken(action.payload.token)
       };
     }
     case actionTypes.CLEAR_ERROR: {
       return {
         ...state,
+        logInError: '',
         signUpError: '',
-        logInError: ''
+        authError: false
       };
     }
     case actionTypes.SIGN_UP_FAIL: {
@@ -47,9 +49,10 @@ const userReducer = (state = initialState, action) => {
     case actionTypes.LOG_IN_SUCCESS: {
       return {
         ...state,
-        logInError: 'done',
+        logInError: '',
+        authError: true,
         isAuthenticated: true,
-        user: action.payload.user
+        user: setAuthToken(action.payload.token)
       };
     }
     case actionTypes.LOG_IN_FAIL: {

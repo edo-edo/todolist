@@ -1,37 +1,35 @@
 import React, { useEffect } from 'react';
 import { connect } from 'react-redux';
-import jwtDecode from 'jwt-decode';
 import PropTypes from 'prop-types';
 
 import Router from './Component/Router/Router';
 import Navigation from './Component/Navigation/Navigation';
 import * as actionTypes from './storage/constant';
-import setAuthToken from './storage/token/setAuthToken';
+import Home from './Component/Home/Home';
 
-const App = ({ setCurrentUser, isAuthenticated }) => {
+const App = ({ setCurrentUser, setCurrentUserError, isAuthenticated }) => {
   useEffect(() => {
     try {
       if (localStorage.jwtToken) {
-        const token = localStorage.getItem('jwtToken');
-        const decoded = jwtDecode(token);
-        setAuthToken(token);
-        setCurrentUser(true, decoded.user);
+        const token = localStorage.jwtToken;
+        setCurrentUser(token);
       }
     } catch (error) {
-      setCurrentUser(false, {});
+      setCurrentUserError('Unauthorized');
     }
   });
   return (
     <div>
       <Navigation />
-      { isAuthenticated && <Router /> }
+      { isAuthenticated ? <Router /> : <Home /> }
     </div>
   );
 };
 
 App.propTypes = {
   isAuthenticated: PropTypes.bool.isRequired,
-  setCurrentUser: PropTypes.func.isRequired
+  setCurrentUser: PropTypes.func.isRequired,
+  setCurrentUserError: PropTypes.func.isRequired
 };
 
 const mapStateToProps = ({ userReducer: state }) => ({
@@ -39,9 +37,13 @@ const mapStateToProps = ({ userReducer: state }) => ({
 });
 
 const mapDispatchToProps = dispatch => ({
-  setCurrentUser: (AuthStatus, user) => dispatch({
-    type: actionTypes.SET_CURRENT_USER,
-    payload: { AuthStatus, user }
+  setCurrentUser: token => dispatch({
+    type: actionTypes.LOG_IN_SUCCESS,
+    payload: { token }
+  }),
+  setCurrentUserError: message => dispatch({
+    type: actionTypes.LOG_IN_FAIL,
+    payload: { message }
   }),
 });
 

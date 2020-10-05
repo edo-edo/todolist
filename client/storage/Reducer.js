@@ -120,6 +120,12 @@ const Reducer = (state = initialState, action) => {
         error: action.payload.message
       };
     }
+    case actionTypes.CLEAR_TASK_ERROR: {
+      return {
+        ...state,
+        error: ''
+      };
+    }
 
     default:
       return state;

@@ -47,10 +47,12 @@ const Navigation = ({
       <ModalForSigningUp
         open={isSignUpOpen}
         handleClose={() => { setIsSignUpOpen(false); clearError(); }}
+        openLogin={() => setIsLogInOpen(true)}
       />
       <ModalForLogIn
         open={isLogInOpen}
         handleClose={() => { setIsLogInOpen(false); clearError(); }}
+        openSignUp={() => setIsSignUpOpen(true)}
       />
     </div>
   );

@@ -9,14 +9,14 @@ import {
 
 import LogIn from './LogIn/LogIn';
 
-const ModalForLogIn = ({ open, handleClose }) => (
+const ModalForLogIn = ({ open, handleClose, openSignUp }) => (
   <div>
     <Dialog
       open={open}
       onClose={handleClose}
     >
       <DialogContent dividers>
-        <LogIn handleClose={handleClose} />
+        <LogIn handleClose={handleClose} openSignUp={openSignUp} />
       </DialogContent>
 
       <DialogActions>
@@ -30,6 +30,7 @@ const ModalForLogIn = ({ open, handleClose }) => (
 
 ModalForLogIn.propTypes = {
   open: PropTypes.bool.isRequired,
+  openSignUp: PropTypes.func.isRequired,
   handleClose: PropTypes.func.isRequired
 };
 

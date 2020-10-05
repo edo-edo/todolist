@@ -1,7 +1,15 @@
-.NewTask {
+.SigningUp {
   flex-grow: 1;
   width: 80%;
   margin: auto;
+}
+
+.LogIn button {
+  color: white;
+  background-color:rgb(4, 158, 4);
+}
+.LogIn button:hover {
+  background-color: rgb(1, 116, 1);
 }
 .MainGrid {
   padding-left: 12;
