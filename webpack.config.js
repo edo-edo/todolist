@@ -5,13 +5,13 @@ const dotenv = require('dotenv-webpack');
 
 module.exports = {
   mode: 'development',
-  entry: './src/index.js',
+  entry: ["@babel/polyfill", "./client/index.js"],
   node: {
     fs: "empty"
 },
   devServer: {
     contentBase: './dist',
-    port: 5000,
+    port: 3000,
     hot: true,
     historyApiFallback: true
   },
@@ -22,8 +22,8 @@ module.exports = {
   },
   plugins: [
     new htmlWebpackPlugin({
-      template: "./src/index.html",
-      filename: "./index.html"
+      template: "./client/index.html",
+      filename: "./index.html",
     }),
     new miniCssExtractPlugin(),
     new dotenv()

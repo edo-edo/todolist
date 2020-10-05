@@ -1,0 +1,20 @@
+.LogIn {
+  flex-grow: 1;
+  width: 80%;
+  margin: auto;
+}
+.MainGrid {
+  padding-left: 12;
+  border: 1px solid #eee;
+  box-shadow: 0 2px 3px #ccc;    
+}
+.LogInCustom button {
+  color: white;
+  background-color:rgb(4, 158, 4);
+}
+.LogInCustom button:hover {
+  background-color: rgb(1, 116, 1);
+}
+.Error {
+  color: red;
+}

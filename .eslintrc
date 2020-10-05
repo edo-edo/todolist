@@ -25,7 +25,8 @@
     "comma-dangle": 0,
     "react/jsx-filename-extension": [1, { "extensions": [".js", ".jsx"] }],
     "no-param-reassign": ["error", { "props": false }],
-    "arrow-parens": ["error", "as-needed"]
+    "arrow-parens": ["error", "as-needed"],
+    "no-underscore-dangle": ["error", { "allow": ["_id"] }]
     },
 
   "env": {
