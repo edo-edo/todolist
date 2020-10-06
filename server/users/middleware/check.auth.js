@@ -5,7 +5,7 @@ const passport = require('passport');
 passport.use(
   new JWTstrategy(
     {
-      secretOrKey: process.env.SECRET_OR_KEY,
+      secretOrKey: process.env.JWT_KEY,
       jwtFromRequest: ExtractJWT.fromAuthHeaderAsBearerToken()
     },
     async (token, done) => {
