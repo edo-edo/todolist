@@ -30,3 +30,9 @@ export const logInUserApi = action => {
 
   return axios.post(`${API_URL}/auth/login`, { email, password });
 };
+
+export const foundEmailApi = action => {
+  const { email } = action.payload;
+
+  return axios.post(`${API_URL}/auth/password`, { email });
+};

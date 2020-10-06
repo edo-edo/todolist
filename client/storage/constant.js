@@ -26,8 +26,13 @@ export const LOG_IN_START = 'LOG_IN_START';
 export const LOG_IN_FAIL = 'LOG_IN_FAIL';
 export const LOG_IN_SUCCESS = 'LOG_IN_SUCCESS';
 
+export const FOUND_EMAIL_START = 'FOUND_EMAIL_START';
+export const FOUND_EMAIL_FAIL = 'FOUND_EMAIL_FAIL';
+export const FOUND_EMAIL_SUCCESS = 'FOUND_EMAIL_SUCCESS';
+
 export const CLEAR_ERROR = 'CLEAR_ERROR';
 export const CLEAR_TASK_ERROR = 'CLEAR_TASK_ERROR';
+export const CLEAR_EMAIL_ERROR = 'CLEAR_EMAIL_ERROR';
 
 export const LOG_OUT = 'LOG_OUT';
 

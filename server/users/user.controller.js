@@ -2,6 +2,7 @@ const passport = require('passport');
 const jwt = require('jsonwebtoken');
 
 require('./user.service');
+const User = require('./user.modal');
 
 const signUp = async (req, res, next) => {
   passport.authenticate('signup', async (err, user, info) => {
@@ -53,7 +54,17 @@ const logIn = async (req, res, next) => {
   })(req, res, next);
 };
 
+const forgotPassword = async (req, res) => {
+  const { email } = req.body;
+  const user = await User.findOne({ email });
+  if (!user) {
+    return res.status(400).send('User not found');
+  }
+  return res.json({ message: 'send success' });
+};
+
 module.exports = {
   signUp,
-  logIn
+  logIn,
+  forgotPassword
 };

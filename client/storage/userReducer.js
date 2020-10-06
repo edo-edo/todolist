@@ -6,7 +6,9 @@ const initialState = {
   logInError: '',
   isAuthenticated: false,
   authError: false,
-  user: {}
+  user: {},
+  isEmail: false,
+  emailError: ''
 };
 
 const userReducer = (state = initialState, action) => {
@@ -76,6 +78,34 @@ const userReducer = (state = initialState, action) => {
         ...state,
         isAuthenticated: action.payload.AuthStatus,
         user: action.payload.user
+      };
+    }
+    case actionTypes.FOUND_EMAIL_START: {
+      return {
+        ...state,
+        isEmail: false,
+        emailError: ''
+      };
+    }
+    case actionTypes.FOUND_EMAIL_FAIL: {
+      return {
+        ...state,
+        isEmail: false,
+        emailError: action.payload.message
+      };
+    }
+    case actionTypes.FOUND_EMAIL_SUCCESS: {
+      return {
+        ...state,
+        isEmail: true,
+        emailError: ''
+      };
+    }
+    case actionTypes.CLEAR_EMAIL_ERROR: {
+      return {
+        ...state,
+        isEmail: false,
+        emailError: ''
       };
     }
     default:

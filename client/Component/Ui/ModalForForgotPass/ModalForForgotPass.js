@@ -7,18 +7,16 @@ import {
   DialogContent
 } from '@material-ui/core';
 
-import LogIn from './LogIn/LogIn';
+import LogIn from './ForgotPass/ForgotPass';
 
-const ModalForLogIn = ({
-  open, handleClose, openSignUp, openForgotPass
-}) => (
+const ModalForForgotPass = ({ open, handleClose }) => (
   <div>
     <Dialog
       open={open}
       onClose={handleClose}
     >
       <DialogContent dividers>
-        <LogIn handleClose={handleClose} openSignUp={openSignUp} openForgotPass={openForgotPass} />
+        <LogIn handleClose={handleClose} />
       </DialogContent>
 
       <DialogActions>
@@ -30,11 +28,9 @@ const ModalForLogIn = ({
   </div>
 );
 
-ModalForLogIn.propTypes = {
+ModalForForgotPass.propTypes = {
   open: PropTypes.bool.isRequired,
-  openForgotPass: PropTypes.func.isRequired,
-  openSignUp: PropTypes.func.isRequired,
   handleClose: PropTypes.func.isRequired
 };
 
-export default ModalForLogIn;
+export default ModalForForgotPass;

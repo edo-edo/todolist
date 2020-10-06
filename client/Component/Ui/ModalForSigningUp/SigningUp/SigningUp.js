@@ -132,8 +132,9 @@ const SigningUp = ({
             )}
           </Grid>
 
-          <Grid item xs={4}>
+          <Grid item xs={5}>
             <Button
+              fullWidth
               type="submit"
               variant="contained"
               color="primary"
@@ -141,7 +142,7 @@ const SigningUp = ({
               Sign Up
             </Button>
           </Grid>
-          <Grid item xs={3} className={classes.LogIn}>
+          <Grid item xs={12} className={classes.LogIn}>
 
             <Button
               onClick={() => { openLogin(); handleClose(); }}

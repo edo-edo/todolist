@@ -16,7 +16,7 @@ import classes from './LogIn.css';
 import * as actionTypes from '../../../../storage/constant';
 
 const LogIn = ({
-  checkUser, error, handleClose, clearError, authError, openSignUp
+  checkUser, error, handleClose, clearError, authError, openSignUp, openForgotPass
 }) => {
   useEffect(() => {
     if (authError) {
@@ -44,7 +44,7 @@ const LogIn = ({
   return (
     <div className={classes.LogIn}>
       <form onSubmit={formik.handleSubmit}>
-        <Grid container spacing={4} className={classes.MainGrid}>
+        <Grid container spacing={2} className={classes.MainGrid}>
 
           <Grid item xs={12}>
             <Typography align="center" component="h6" variant="h5">Log In</Typography>
@@ -95,20 +95,25 @@ const LogIn = ({
             <div className={classes.Error}>{formik.errors.password}</div>
             )}
           </Grid>
-
-          <Grid item xs={3} className={classes.LogInCustom}>
+          <Grid item xs={10}>
+            <Typography onClick={() => { handleClose(); openForgotPass(); }} component="h2" className={classes.ForgetPassword}>
+              Forgot password?
+            </Typography>
+          </Grid>
+          <Grid item xs={5}>
             <Button
+              fullWidth
+              color="primary"
               type="submit"
               variant="contained"
             >
               Log In
             </Button>
           </Grid>
-          <Grid item xs={4}>
+          <Grid item xs={12} className={classes.SignUpCustom}>
             <Button
               onClick={() => { handleClose(); openSignUp(); }}
               variant="contained"
-              color="primary"
             >
               Sign Up
             </Button>
@@ -122,6 +127,7 @@ const LogIn = ({
 LogIn.propTypes = {
   error: PropTypes.string.isRequired,
   authError: PropTypes.bool.isRequired,
+  openForgotPass: PropTypes.func.isRequired,
   checkUser: PropTypes.func.isRequired,
   openSignUp: PropTypes.func.isRequired,
   handleClose: PropTypes.func.isRequired,

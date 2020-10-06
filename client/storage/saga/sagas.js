@@ -8,7 +8,8 @@ import {
   removeTask,
   onCheckTask,
   signUpUser,
-  logInUser
+  logInUser,
+  foundEmail
 } from './sagaActions';
 
 function* rootSaga() {
@@ -19,6 +20,7 @@ function* rootSaga() {
   yield takeLatest(actionTypes.ON_CHECK_START, onCheckTask);
   yield takeLatest(actionTypes.SIGN_UP_START, signUpUser);
   yield takeLatest(actionTypes.LOG_IN_START, logInUser);
+  yield takeLatest(actionTypes.FOUND_EMAIL_START, foundEmail);
 }
 
 export default rootSaga;

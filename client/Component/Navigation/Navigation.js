@@ -14,13 +14,17 @@ import ModalForSigningUp from '../Ui/ModalForSigningUp/ModalForSigningUp';
 import ModalForLogIn from '../Ui/ModalForLogIn/ModalForLogIn';
 import SignOut from '../Ui/SignOut/SignOut';
 import * as actionTypes from '../../storage/constant';
+import ModalForForgotPass from '../Ui/ModalForForgotPass/ModalForForgotPass';
 
 const Navigation = ({
   user, isAuthenticated, logOut, clearError
 }) => {
   const [isLogInOpen, setIsLogInOpen] = useState(false);
   const [isSignUpOpen, setIsSignUpOpen] = useState(false);
+  const [isForgotPassOpen, setIsForgotPassOpen] = useState(false);
+
   const history = useHistory();
+
   return (
     <div className={classes.AppBar}>
       <header>
@@ -53,6 +57,11 @@ const Navigation = ({
         open={isLogInOpen}
         handleClose={() => { setIsLogInOpen(false); clearError(); }}
         openSignUp={() => setIsSignUpOpen(true)}
+        openForgotPass={() => setIsForgotPassOpen(true)}
+      />
+      <ModalForForgotPass
+        open={isForgotPassOpen}
+        handleClose={() => { setIsForgotPassOpen(false); clearError(); }}
       />
     </div>
   );

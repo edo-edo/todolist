@@ -8,7 +8,8 @@ import {
   removeTaskApi,
   onCheckTaskApi,
   signUpUserApi,
-  logInUserApi
+  logInUserApi,
+  foundEmailApi
 } from './Apis/Apis';
 
 export function* fetchTasks() {
@@ -113,5 +114,17 @@ export function* logInUser(action) {
     }
   } catch (err) {
     yield put({ type: actionTypes.LOG_IN_FAIL, payload: { message: err.response.data } });
+  }
+}
+
+export function* foundEmail(action) {
+  try {
+    const response = yield call(foundEmailApi, action);
+
+    if (response) {
+      yield put({ type: actionTypes.FOUND_EMAIL_SUCCESS });
+    }
+  } catch (err) {
+    yield put({ type: actionTypes.FOUND_EMAIL_FAIL, payload: { message: err.response.data } });
   }
 }
