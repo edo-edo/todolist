@@ -1,8 +1,10 @@
 const passport = require('passport');
 const jwt = require('jsonwebtoken');
+const crypto = require('crypto');
 
 require('./user.service');
 const User = require('./user.modal');
+const sendMail = require('./user.service');
 
 const signUp = async (req, res, next) => {
   passport.authenticate('signup', async (err, user, info) => {
@@ -60,6 +62,11 @@ const forgotPassword = async (req, res) => {
   if (!user) {
     return res.status(400).send('User not found');
   }
+  crypto.randomBytes(20, (err, buffer) => {
+    const token = buffer.toString('hex');
+    console.log('token', token);
+    sendMail(user, token);
+  });
   return res.json({ message: 'send success' });
 };
 

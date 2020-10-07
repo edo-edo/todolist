@@ -1,5 +1,6 @@
 const passport = require('passport');
 const LocalStrategy = require('passport-local').Strategy;
+const nodemailer = require('nodemailer');
 
 const User = require('./user.modal');
 const userValidation = require('./user.validation');
@@ -71,3 +72,35 @@ passport.use(
     }
   )
 );
+
+const sendMail = async (user, token) => {
+  const transporter = nodemailer.createTransport({
+    host: 'smtp.gmail.com',
+    port: 465,
+    auth: {
+      user: process.env.EMAIL,
+      pass: process.env.EMAIL_PASSWORD,
+    },
+    tls: {
+      rejectUnauthorized: false
+    }
+  });
+
+  const info = await transporter.sendMail({
+    from: process.env.EMAIL, // sender address
+    to: user.email, // list of receivers
+    subject: 'reset password ✔', // Subject line
+    text: `Hello ${user.firstName}`, // plain text body
+    html: `<a href=http://localhost:3000/auth/reset_password/${token}> reset password </a>`
+    // context: {
+    //   url: `http://localhost:3000/auth/reset_password?token=${token}`,
+    //   name: user.firstName
+    // }
+  });
+  console.log('info', info);
+
+  console.log('Message sent: %s', info.messageId);
+  console.log('Preview URL: %s', nodemailer.getTestMessageUrl(info));
+};
+
+module.exports = sendMail;

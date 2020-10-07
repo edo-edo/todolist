@@ -1,7 +1,11 @@
 import React, { useState } from 'react';
-import { useHistory } from 'react-router-dom';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
+import {
+  useHistory,
+  Route,
+  Switch,
+} from 'react-router-dom';
 import {
   AppBar,
   Toolbar,
@@ -63,6 +67,9 @@ const Navigation = ({
         open={isForgotPassOpen}
         handleClose={() => { setIsForgotPassOpen(false); clearError(); }}
       />
+      <Switch>
+        <Route path="/auth/reset_password/:token" />
+      </Switch>
     </div>
   );
 };
