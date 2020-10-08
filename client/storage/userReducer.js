@@ -8,7 +8,9 @@ const initialState = {
   authError: false,
   user: {},
   isEmail: false,
-  emailError: ''
+  emailError: '',
+  loading: false,
+  resetPassError: ''
 };
 
 const userReducer = (state = initialState, action) => {
@@ -84,30 +86,56 @@ const userReducer = (state = initialState, action) => {
       return {
         ...state,
         isEmail: false,
-        emailError: ''
+        emailError: '',
+        loading: true
       };
     }
     case actionTypes.FOUND_EMAIL_FAIL: {
       return {
         ...state,
         isEmail: false,
-        emailError: action.payload.message
+        emailError: action.payload.message,
+        loading: false
       };
     }
     case actionTypes.FOUND_EMAIL_SUCCESS: {
       return {
         ...state,
         isEmail: true,
-        emailError: ''
+        emailError: '',
+        loading: false
       };
     }
     case actionTypes.CLEAR_EMAIL_ERROR: {
       return {
         ...state,
         isEmail: false,
-        emailError: ''
+        emailError: '',
+        loading: false,
+        resetPassError: ''
       };
     }
+    case actionTypes.RESET_PASSWORD_START: {
+      return {
+        ...state,
+        resetPassError: ''
+      };
+    }
+    case actionTypes.RESET_PASSWORD_SUCCESS: {
+      return {
+        ...state,
+        resetPassError: '',
+        isAuthenticated: true,
+        user: setAuthToken(action.payload.token)
+      };
+    }
+    case actionTypes.RESET_PASSWORD_FAIL: {
+      return {
+        ...state,
+        resetPassError: action.payload.message
+      };
+    }
+
     default:
       return state;
   }

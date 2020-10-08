@@ -1,10 +1,12 @@
 const passport = require('passport');
 const jwt = require('jsonwebtoken');
-const crypto = require('crypto');
+const Joi = require('joi');
+const jwtDecode = require('jwt-decode');
+const bcrypt = require('bcryptjs');
 
-require('./user.service');
-const User = require('./user.modal');
-const sendMail = require('./user.service');
+require('./auth.service');
+const User = require('../users/user.modal');
+const sendMail = require('./auth.service');
 
 const signUp = async (req, res, next) => {
   passport.authenticate('signup', async (err, user, info) => {
@@ -18,7 +20,7 @@ const signUp = async (req, res, next) => {
           return next(error);
         }
 
-        const body = { _id: user._id, firstName: user.firstName };
+        const body = { _id: user._id, email: user.email };
         const token = jwt.sign({ user: body }, process.env.JWT_KEY);
 
         return res.json({ token: `Bearer ${token}` });
@@ -62,16 +64,44 @@ const forgotPassword = async (req, res) => {
   if (!user) {
     return res.status(400).send('User not found');
   }
-  crypto.randomBytes(20, (err, buffer) => {
-    const token = buffer.toString('hex');
-    console.log('token', token);
-    sendMail(user, token);
-  });
-  return res.json({ message: 'send success' });
+  const body = { _id: user._id, email: user.email };
+  const token = jwt.sign({ user: body }, 'top_secret');
+  const info = sendMail(user, token);
+
+  info.then(() => res.json({ message: 'send success' }))
+    .catch(() => res.status(400).send('Somthing went wrong'));
+
+  return false;
+};
+
+const resetPassword = async (req, res) => {
+  const { password, rePassword, token } = req.body;
+
+  if (password !== rePassword) {
+    return res.status(400).send('Passwords must match');
+  }
+  Joi.attempt(password, Joi.string().required().min(6).regex(RegExp('^[a-zA-Z0-9]'))
+    .message('You password is week'));
+
+  const decoded = jwtDecode(token);
+  const { _id, email } = decoded.user;
+  const hash = await bcrypt.hash(password, 10);
+
+  const updateUser = await User.updateOne({ _id, email }, { password: hash });
+
+  if (updateUser.nModified === 1) {
+    const user = await User.findOne({ _id, email });
+    const body = { _id: user._id, firstName: user.firstName };
+    const newtoken = jwt.sign({ user: body }, 'top_secret');
+
+    return res.json({ token: `Bearer ${newtoken}` });
+  }
+  return res.status(400).send('failed to update password');
 };
 
 module.exports = {
   signUp,
   logIn,
-  forgotPassword
+  forgotPassword,
+  resetPassword
 };

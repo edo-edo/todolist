@@ -16,7 +16,7 @@ import classes from './ForgotPass.css';
 import * as actionTypes from '../../../../storage/constant';
 
 const ForgotPass = ({
-  error, isEmail, addEmail, clearError
+  error, isEmail, addEmail, clearError, loading
 }) => {
   useEffect(() => () => clearError(), []);
 
@@ -39,7 +39,7 @@ const ForgotPass = ({
     );
   }
   return (
-    <div className={classes.LogIn}>
+    <div className={classes.ForgotPass}>
       <form onSubmit={formik.handleSubmit}>
         <Grid container spacing={2} className={classes.MainGrid}>
 
@@ -51,6 +51,15 @@ const ForgotPass = ({
               s find your account
             </Typography>
           </Grid>
+          {
+        loading && (
+          <Grid item xs={12}>
+            <Typography className={classes.Loading} align="center" component="h6" variant="h6">
+              Sending...
+            </Typography>
+          </Grid>
+        )
+      }
           {
         error.length !== 0 && (
           <Grid item xs={12}>
@@ -97,13 +106,15 @@ const ForgotPass = ({
 ForgotPass.propTypes = {
   error: PropTypes.string.isRequired,
   isEmail: PropTypes.bool.isRequired,
+  loading: PropTypes.bool.isRequired,
   addEmail: PropTypes.func.isRequired,
   clearError: PropTypes.func.isRequired
 };
 
 const mapStateToProps = ({ userReducer: state }) => ({
   error: state.emailError,
-  isEmail: state.isEmail
+  isEmail: state.isEmail,
+  loading: state.loading
 });
 
 const mapDispatchToProps = dispatch => ({

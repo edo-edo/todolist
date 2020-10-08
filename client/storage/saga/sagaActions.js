@@ -9,7 +9,8 @@ import {
   onCheckTaskApi,
   signUpUserApi,
   logInUserApi,
-  foundEmailApi
+  foundEmailApi,
+  resetPasswordApi
 } from './Apis/Apis';
 
 export function* fetchTasks() {
@@ -126,5 +127,18 @@ export function* foundEmail(action) {
     }
   } catch (err) {
     yield put({ type: actionTypes.FOUND_EMAIL_FAIL, payload: { message: err.response.data } });
+  }
+}
+
+export function* resetPassword(action) {
+  try {
+    const response = yield call(resetPasswordApi, action);
+
+    if (response) {
+      const { token } = response.data;
+      yield put({ type: actionTypes.RESET_PASSWORD_SUCCESS, payload: { token } });
+    }
+  } catch (err) {
+    yield put({ type: actionTypes.RESET_PASSWORD_FAIL, payload: { message: err.response.data } });
   }
 }

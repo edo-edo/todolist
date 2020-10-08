@@ -34,5 +34,11 @@ export const logInUserApi = action => {
 export const foundEmailApi = action => {
   const { email } = action.payload;
 
-  return axios.post(`${API_URL}/auth/password`, { email });
+  return axios.post(`${API_URL}/auth/forgot_password`, { email });
+};
+
+export const resetPasswordApi = action => {
+  const { password, rePassword, token } = action.payload;
+
+  return axios.post(`${API_URL}/auth/reset_password`, { password, rePassword, token });
 };

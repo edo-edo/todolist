@@ -57,7 +57,7 @@ const SigningUp = ({
   return (
     <div className={classes.SigningUp}>
       <form onSubmit={formik.handleSubmit}>
-        <Grid container spacing={4} className={classes.MainGrid}>
+        <Grid container spacing={2} className={classes.MainGrid}>
 
           <Grid item xs={12}>
             <Typography align="center" component="h6" variant="h5">Sign Up</Typography>

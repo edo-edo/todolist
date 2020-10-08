@@ -19,6 +19,7 @@ import ModalForLogIn from '../Ui/ModalForLogIn/ModalForLogIn';
 import SignOut from '../Ui/SignOut/SignOut';
 import * as actionTypes from '../../storage/constant';
 import ModalForForgotPass from '../Ui/ModalForForgotPass/ModalForForgotPass';
+import ModalForResetPass from '../Ui/ModalForResetPass/ModalForResetPass';
 
 const Navigation = ({
   user, isAuthenticated, logOut, clearError
@@ -68,7 +69,9 @@ const Navigation = ({
         handleClose={() => { setIsForgotPassOpen(false); clearError(); }}
       />
       <Switch>
-        <Route path="/auth/reset_password/:token" />
+        <Route exact path="/auth/reset_password">
+          <ModalForResetPass handleClose={() => history.push('/')} />
+        </Route>
       </Switch>
     </div>
   );

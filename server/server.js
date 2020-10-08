@@ -7,7 +7,7 @@ const signale = require('signale');
 require('dotenv').config();
 
 const taskRouter = require('./tasks');
-const userRouter = require('./users');
+const authRouter = require('./auth');
 
 const app = express();
 app.use(bodyParser.json());
@@ -32,7 +32,7 @@ app.use((req, res, next) => {
 });
 
 app.use('/tasks', taskRouter);
-app.use('/', userRouter);
+app.use('/auth', authRouter);
 
 app.listen(process.env.PORT, () => signale.success(`server started ${process.env.PORT}`));
 

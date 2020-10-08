@@ -8,7 +8,7 @@ const {
   updateTask,
 } = require('./task.controller');
 
-require('../users/middleware/check.auth');
+require('../auth/middleware/check.auth');
 
 const router = Router();
 

@@ -2,8 +2,8 @@ const passport = require('passport');
 const LocalStrategy = require('passport-local').Strategy;
 const nodemailer = require('nodemailer');
 
-const User = require('./user.modal');
-const userValidation = require('./user.validation');
+const User = require('../users/user.modal');
+const userValidation = require('../users/user.validation');
 
 passport.use(
   'signup',
@@ -87,20 +87,15 @@ const sendMail = async (user, token) => {
   });
 
   const info = await transporter.sendMail({
-    from: process.env.EMAIL, // sender address
-    to: user.email, // list of receivers
-    subject: 'reset password ✔', // Subject line
-    text: `Hello ${user.firstName}`, // plain text body
-    html: `<a href=http://localhost:3000/auth/reset_password/${token}> reset password </a>`
-    // context: {
-    //   url: `http://localhost:3000/auth/reset_password?token=${token}`,
-    //   name: user.firstName
-    // }
+    from: process.env.EMAI,
+    to: user.email,
+    subject: 'reset password ✔',
+    html: `<h1> Hello ${user.firstName} </h1>
+    <p> If you requested to reset password please visit this link </p>
+    <a href=http://localhost:3000/auth/reset_password?token=${token}> reset password </a>`
   });
-  console.log('info', info);
 
-  console.log('Message sent: %s', info.messageId);
-  console.log('Preview URL: %s', nodemailer.getTestMessageUrl(info));
+  return info;
 };
 
 module.exports = sendMail;
