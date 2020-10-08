@@ -76,6 +76,7 @@ const forgotPassword = async (req, res) => {
 
 const resetPassword = async (req, res) => {
   const { password, rePassword, token } = req.body;
+  let decoded = null;
 
   if (password !== rePassword) {
     return res.status(400).send('Passwords must match');
@@ -83,7 +84,12 @@ const resetPassword = async (req, res) => {
   Joi.attempt(password, Joi.string().required().min(6).regex(RegExp('^[a-zA-Z0-9]'))
     .message('You password is week'));
 
-  const decoded = jwtDecode(token);
+  try {
+    decoded = jwtDecode(token);
+  } catch (e) {
+    return res.status(400).send('Invalid token');
+  }
+
   const { _id, email } = decoded.user;
   const hash = await bcrypt.hash(password, 10);
 
