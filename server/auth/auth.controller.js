@@ -20,7 +20,7 @@ const signUp = async (req, res, next) => {
           return next(error);
         }
 
-        const body = { _id: user._id, email: user.email };
+        const body = { _id: user._id, firstName: user.firstName };
         const token = jwt.sign({ user: body }, process.env.JWT_KEY);
 
         return res.json({ token: `Bearer ${token}` });
