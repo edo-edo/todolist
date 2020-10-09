@@ -69,7 +69,7 @@ const Navigation = ({
         handleClose={() => { setIsForgotPassOpen(false); clearError(); }}
       />
       <Switch>
-        <Route exact path="/auth/reset_password">
+        <Route exact path="/auth/reset-password">
           <ModalForResetPass handleClose={() => history.push('/')} />
         </Route>
       </Switch>

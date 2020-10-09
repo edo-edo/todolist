@@ -93,6 +93,7 @@ const ForgotPass = ({
               color="primary"
               type="submit"
               variant="contained"
+              disabled={loading}
             >
               Found
             </Button>

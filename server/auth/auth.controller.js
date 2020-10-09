@@ -3,6 +3,7 @@ const jwt = require('jsonwebtoken');
 const Joi = require('joi');
 const jwtDecode = require('jwt-decode');
 const bcrypt = require('bcryptjs');
+const signale = require('signale');
 
 require('./auth.service');
 const User = require('../users/user.modal');
@@ -46,7 +47,7 @@ const logIn = async (req, res, next) => {
         }
 
         const body = { _id: user._id, firstName: user.firstName };
-        const token = jwt.sign({ user: body }, 'top_secret');
+        const token = jwt.sign({ user: body }, process.env.JWT_KEY);
 
         return res.json({ token: `Bearer ${token}` });
       });
@@ -60,16 +61,31 @@ const logIn = async (req, res, next) => {
 
 const forgotPassword = async (req, res) => {
   const { email } = req.body;
-  const user = await User.findOne({ email });
-  if (!user) {
-    return res.status(400).send('User not found');
-  }
-  const body = { _id: user._id, email: user.email };
-  const token = jwt.sign({ user: body }, 'top_secret');
-  const info = sendMail(user, token);
+  try {
+    const user = await User.findOne({ email });
 
-  info.then(() => res.json({ message: 'send success' }))
-    .catch(() => res.status(400).send('Somthing went wrong'));
+    if (!user) {
+      return res.status(400).send('User not found');
+    }
+
+    const body = { _id: user._id, email: user.email };
+    const token = jwt.sign({ user: body }, process.env.JWT_KEY);
+
+    await sendMail(user, token);
+
+    const updateUser = await User.updateOne(
+      { _id: user._id, email: user.email },
+      { resetPassword: token }
+    );
+
+    if (updateUser.nModified === 1) {
+      res.json({ message: 'send success' });
+    }
+  } catch (err) {
+    signale.fatal('Error: can not send mail', err);
+
+    res.status(400).send('Somthing went wrong');
+  }
 
   return false;
 };
@@ -90,19 +106,28 @@ const resetPassword = async (req, res) => {
     return res.status(400).send('Invalid token');
   }
 
-  const { _id, email } = decoded.user;
-  const hash = await bcrypt.hash(password, 10);
+  try {
+    const { _id, email } = decoded.user;
+    const hash = await bcrypt.hash(password, 10);
 
-  const updateUser = await User.updateOne({ _id, email }, { password: hash });
+    const updateUser = await User.updateOne(
+      { _id, email, resetPassword: token },
+      { password: hash }
+    );
 
-  if (updateUser.nModified === 1) {
-    const user = await User.findOne({ _id, email });
-    const body = { _id: user._id, firstName: user.firstName };
-    const newtoken = jwt.sign({ user: body }, 'top_secret');
+    if (updateUser.nModified === 1) {
+      const user = await User.findOne({ _id, email });
+      const body = { _id: user._id, firstName: user.firstName };
+      const newtoken = jwt.sign({ user: body }, process.env.JWT_KEY);
 
-    return res.json({ token: `Bearer ${newtoken}` });
+      return res.json({ token: `Bearer ${newtoken}` });
+    }
+    return res.status(400).send('failed to update password');
+  } catch (err) {
+    signale.fatal('Error:failed to update password', err);
+
+    return res.status(400).send('failed to update password');
   }
-  return res.status(400).send('failed to update password');
 };
 
 module.exports = {

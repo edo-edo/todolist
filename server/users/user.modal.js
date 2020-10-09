@@ -11,6 +11,7 @@ const userSchema = new Schema({
     unique: true,
   },
   password: String,
+  resetPassword: String
 }, { timestamps: true });
 
 userSchema.pre('save', async function save(next) {

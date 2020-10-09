@@ -11,7 +11,8 @@ const getTasks = async (req, res) => {
     const tasks = await Task.find({ user: _id }, { body: 0, __v: 0 });
     return res.json({ tasks });
   } catch (err) {
-    signale.fatal('Fatal: failed to get tasks');
+    signale.fatal('Fatal: failed to get tasks', err);
+
     return res.status(500).send('failed to get tasks');
   }
 };
@@ -32,7 +33,7 @@ const createTask = async (req, res) => {
 
     return res.json({ id: task._id });
   } catch (err) {
-    signale.fatal('Fatal: failed to create task');
+    signale.fatal('Fatal: failed to create task', err);
 
     return res.status(500).send('failed to create task');
   }
@@ -43,12 +44,14 @@ const getTask = async (req, res) => {
     const { _id } = req.user;
 
     const task = await Task.findOne({ _id: req.params.id, user: _id }, { __v: 0 });
-    if (!task) {
-      return res.status(500).send('failed to get task');
+
+    if (task) {
+      return res.json({ task });
     }
-    return res.json({ task });
+
+    return res.status(500).send('failed to get task');
   } catch (err) {
-    signale.fatal('Fatal: failed to get task');
+    signale.fatal('Fatal: failed to get task', err);
 
     return res.status(500).send('failed to get task');
   }
@@ -65,7 +68,7 @@ const removeTask = async (req, res) => {
     }
     return res.json({ message: 'task deleted' });
   } catch (err) {
-    signale.fatal('Fatal: failed to delete task');
+    signale.fatal('Fatal: failed to delete task', err);
 
     return res.status(500).send('failed to delete task');
   }
@@ -78,17 +81,18 @@ const updateTask = async (req, res) => {
 
     Joi.attempt(status, Joi.boolean());
 
-    const task = await Task.findOneAndUpdate(
+    const { nModified } = await Task.updateOne(
       { _id: req.params.id, user: _id },
       { status: !status }
     );
-    if (!task) {
+
+    if (nModified === 0) {
       return res.status(500).send('failed to update status');
     }
 
     return res.json({ message: 'status updated' });
   } catch (err) {
-    signale.fatal('Fatal: failed to update status');
+    signale.fatal('Fatal: failed to update status', err);
 
     return res.status(500).send('failed to update status');
   }
