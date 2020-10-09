@@ -21,10 +21,10 @@ const SigningUp = ({
 }) => {
   useEffect(() => {
     if (authError) {
-      clearError();
       handleClose();
     }
-  }, [authError, error]);
+    return () => clearError();
+  }, [authError]);
   const formik = useFormik({
     initialValues: {
       firstName: '',
