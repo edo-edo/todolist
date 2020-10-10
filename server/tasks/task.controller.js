@@ -42,36 +42,41 @@ const createTask = async (req, res) => {
 const getTask = async (req, res) => {
   try {
     const { _id } = req.user;
+    try {
+      const task = await Task.findOne({ _id: req.params.id, user: _id }, { __v: 0 });
 
-    const task = await Task.findOne({ _id: req.params.id, user: _id }, { __v: 0 });
-
-    if (task) {
-      return res.json({ task });
+      if (task) {
+        return res.json({ task });
+      }
+    } catch {
+      return res.status(500).send('failed to get task');
     }
-
-    return res.status(500).send('failed to get task');
   } catch (err) {
     signale.fatal('Fatal: failed to get task', err);
 
     return res.status(500).send('failed to get task');
   }
+  return false;
 };
 
 const removeTask = async (req, res) => {
   try {
     const { _id } = req.user;
+    try {
+      const { deletedCount } = await Task.deleteOne({ _id: req.params.id, user: _id });
 
-    const { deletedCount } = await Task.deleteOne({ _id: req.params.id, user: _id });
-
-    if (deletedCount === 0) {
+      if (deletedCount === 1) {
+        return res.json({ message: 'task deleted' });
+      }
+    } catch {
       return res.status(403).send('failed to delete task');
     }
-    return res.json({ message: 'task deleted' });
   } catch (err) {
     signale.fatal('Fatal: failed to delete task', err);
 
     return res.status(500).send('failed to delete task');
   }
+  return false;
 };
 
 const updateTask = async (req, res) => {
