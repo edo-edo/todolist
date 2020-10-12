@@ -6,6 +6,7 @@ const bcrypt = require('bcryptjs');
 const signale = require('signale');
 
 require('./auth.service');
+const { assert } = require('console');
 const User = require('../users/user.modal');
 const sendMail = require('./auth.service');
 
@@ -57,6 +58,12 @@ const logIn = async (req, res, next) => {
 
     return false;
   })(req, res, next);
+};
+
+const loginGoogle = async (req, res, next) => {
+  passport.authenticate('google', {
+    scope: ['profile']
+  });
 };
 
 const forgotPassword = async (req, res) => {
@@ -134,5 +141,6 @@ module.exports = {
   signUp,
   logIn,
   forgotPassword,
-  resetPassword
+  resetPassword,
+  loginGoogle
 };

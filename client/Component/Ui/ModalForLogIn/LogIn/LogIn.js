@@ -16,7 +16,7 @@ import classes from './LogIn.css';
 import * as actionTypes from '../../../../storage/constant';
 
 const LogIn = ({
-  checkUser, error, handleClose, clearError, authError, openSignUp, openForgotPass
+  checkUser, error, handleClose, clearError, authError, openSignUp, openForgotPass, logInGoogle
 }) => {
   useEffect(() => {
     if (authError) {
@@ -118,6 +118,15 @@ const LogIn = ({
               Sign Up
             </Button>
           </Grid>
+          <Grid item xs={12}>
+            <Button
+              onClick={() => logInGoogle()}
+              variant="contained"
+            >
+              Google+
+            </Button>
+            <a href="/auth/google">Google+</a>
+          </Grid>
         </Grid>
       </form>
     </div>
@@ -142,6 +151,7 @@ const mapStateToProps = ({ userReducer: state }) => ({
 
 const mapDispatchToProps = dispatch => ({
   checkUser: date => dispatch({ type: actionTypes.LOG_IN_START, payload: { date } }),
+  logInGoogle: () => dispatch({ type: actionTypes.LOG_IN_GOOGLE }),
   clearError: () => dispatch({ type: actionTypes.CLEAR_ERROR }),
 });
 

@@ -136,6 +136,12 @@ const userReducer = (state = initialState, action) => {
       };
     }
 
+    case actionTypes.LOG_IN_GOOGLE: {
+      return {
+        ...state,
+      };
+    }
+
     default:
       return state;
   }

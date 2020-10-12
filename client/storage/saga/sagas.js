@@ -10,7 +10,8 @@ import {
   signUpUser,
   logInUser,
   foundEmail,
-  resetPassword
+  resetPassword,
+  logInUserGoogle
 } from './sagaActions';
 
 function* rootSaga() {
@@ -23,6 +24,7 @@ function* rootSaga() {
   yield takeLatest(actionTypes.LOG_IN_START, logInUser);
   yield takeLatest(actionTypes.FOUND_EMAIL_START, foundEmail);
   yield takeLatest(actionTypes.RESET_PASSWORD_START, resetPassword);
+  yield takeLatest(actionTypes.LOG_IN_GOOGLE, logInUserGoogle);
 }
 
 export default rootSaga;

@@ -31,6 +31,8 @@ export const logInUserApi = action => {
   return axios.post(`${API_URL}/auth/login`, { email, password });
 };
 
+export const logInUserGoogleApi = () => axios.get(`${API_URL}/auth/google`);
+
 export const foundEmailApi = action => {
   const { email } = action.payload;
 

@@ -1,5 +1,6 @@
 const passport = require('passport');
 const LocalStrategy = require('passport-local').Strategy;
+const GoogleStrategy = require('passport-google-oauth20').Strategy;
 const nodemailer = require('nodemailer');
 
 const User = require('../users/user.modal');
@@ -71,6 +72,16 @@ passport.use(
       }
     }
   )
+);
+
+passport.use(
+  new GoogleStrategy({
+    clientID: process.env.GOOGLE_CLIENT_ID,
+    clientSecret: process.env.GOOGLE_CLIENT_SECRET,
+  }, async (accessToken, refreshToken, profile, done) => {
+    console.log(accessToken, refreshToken, profile);
+    done(null, 'token');
+  })
 );
 
 const sendMail = async (user, token) => {
