@@ -6,7 +6,6 @@ const bcrypt = require('bcryptjs');
 const signale = require('signale');
 
 require('./auth.service');
-const { assert } = require('console');
 const User = require('../users/user.modal');
 const sendMail = require('./auth.service');
 
@@ -60,11 +59,19 @@ const logIn = async (req, res, next) => {
   })(req, res, next);
 };
 
-const loginGoogle = async (req, res, next) => {
-  passport.authenticate('google', {
-    scope: ['profile']
+const loginGoogle = passport.authenticate('google', {
+  scope: ['profile', 'email']
+}, (err, user, info) => {
+  console.log(1234);
+  console.log(info);
+});
+
+const loginGoogleRedirect = passport.authenticate('google', { failureRedirect: 'http//localhost:3000' },
+  (req, res) => {
+    console.log(res);
+    // Successful authentication, redirect home.
+    // res.redirect('http//localhost:3000');
   });
-};
 
 const forgotPassword = async (req, res) => {
   const { email } = req.body;
@@ -142,5 +149,6 @@ module.exports = {
   logIn,
   forgotPassword,
   resetPassword,
-  loginGoogle
+  loginGoogle,
+  loginGoogleRedirect
 };

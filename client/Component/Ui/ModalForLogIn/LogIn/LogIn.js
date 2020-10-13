@@ -120,12 +120,13 @@ const LogIn = ({
           </Grid>
           <Grid item xs={12}>
             <Button
-              onClick={() => logInGoogle()}
+              href={`${process.env.API_URL}/auth/google`}
+              // onClick={() => logInGoogle()}
               variant="contained"
             >
               Google+
             </Button>
-            <a href="/auth/google">Google+</a>
+            <a href="/auth/google">GOOGLE+</a>
           </Grid>
         </Grid>
       </form>

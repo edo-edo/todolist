@@ -1,7 +1,7 @@
 const passport = require('passport');
 const LocalStrategy = require('passport-local').Strategy;
-const GoogleStrategy = require('passport-google-oauth20').Strategy;
 const nodemailer = require('nodemailer');
+const GoogleStrategy = require('passport-google-oauth20').Strategy;
 
 const User = require('../users/user.modal');
 const userValidation = require('../users/user.validation');
@@ -73,15 +73,31 @@ passport.use(
     }
   )
 );
+passport.serializeUser((user, done) => {
+  done(null, user.id);
+});
+
+passport.deserializeUser((id, done) => {
+  User.findById(id).then(user => {
+    done(null, user);
+  });
+});
 
 passport.use(
+  'google',
   new GoogleStrategy({
     clientID: process.env.GOOGLE_CLIENT_ID,
     clientSecret: process.env.GOOGLE_CLIENT_SECRET,
-  }, async (accessToken, refreshToken, profile, done) => {
-    console.log(accessToken, refreshToken, profile);
-    done(null, 'token');
-  })
+    callbackURL: '/auth/google/callback'
+  }, (async (accessToken, refreshToken, profile, done) => {
+    const email = profile.emails[0].value;
+    await User.findOne({ email }).then(async user => {
+      if (!user) {
+        return done(null, false, { message: `${email} already exists ` });
+      }
+      return done(null, email);
+    });
+  }))
 );
 
 const sendMail = async (user, token) => {
