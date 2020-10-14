@@ -91,11 +91,17 @@ passport.use(
     callbackURL: '/auth/google/callback'
   }, (async (accessToken, refreshToken, profile, done) => {
     const email = profile.emails[0].value;
+    const firstName = profile.name.givenName;
+    const lastName = profile.name.familyName;
     await User.findOne({ email }).then(async user => {
-      if (!user) {
+      if (user) {
         return done(null, false, { message: `${email} already exists ` });
       }
-      return done(null, email);
+      const newuser = {
+        _id: '1223ferfefr343',
+        firstName
+      };
+      return done(null, newuser);
     });
   }))
 );

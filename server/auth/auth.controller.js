@@ -61,17 +61,35 @@ const logIn = async (req, res, next) => {
 
 const loginGoogle = passport.authenticate('google', {
   scope: ['profile', 'email']
-}, (err, user, info) => {
-  console.log(1234);
-  console.log(info);
 });
 
-const loginGoogleRedirect = passport.authenticate('google', { failureRedirect: 'http//localhost:3000' },
-  (req, res) => {
-    console.log(res);
-    // Successful authentication, redirect home.
-    // res.redirect('http//localhost:3000');
-  });
+const loginGoogleRedirect = async (req, res, next) => {
+  passport.authenticate('google', async (err, user, info) => {
+    try {
+      if (!user || err) {
+        return res.status(400).send(info.message);
+      }
+
+      req.login(user, { session: false }, async error => {
+        if (error) {
+          return next(error);
+        }
+        console.log(user);
+        const body = { _id: user._id, firstName: user.firstName };
+        const token = jwt.sign({ user: body }, process.env.JWT_KEY);
+        res.writeHead(302, {
+          location: `http://localhost:3000?token=${token}`
+        });
+        return res.end();
+        // return res.json({ token: `Bearer ${token}` });
+      });
+    } catch (error) {
+      return next(error);
+    }
+
+    return false;
+  })(req, res, next);
+};
 
 const forgotPassword = async (req, res) => {
   const { email } = req.body;
