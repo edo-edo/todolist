@@ -59,29 +59,63 @@ const logIn = async (req, res, next) => {
   })(req, res, next);
 };
 
-const loginGoogle = passport.authenticate('google', {
+const signUpGoogle = passport.authenticate('googleSignUp', {
   scope: ['profile', 'email']
 });
 
-const loginGoogleRedirect = async (req, res, next) => {
-  passport.authenticate('google', async (err, user, info) => {
+const loginGoogle = passport.authenticate('googleLogin', {
+  scope: ['profile', 'email']
+});
+
+const logInGoogleRedirect = async (req, res, next) => {
+  passport.authenticate('googleLogin', async (err, user, info) => {
     try {
       if (!user || err) {
-        return res.status(400).send(info.message);
+        res.writeHead(302, {
+          location: `http://localhost:3000?logInError=${info.message}`
+        });
+        return res.end();
       }
 
       req.login(user, { session: false }, async error => {
         if (error) {
           return next(error);
         }
-        console.log(user);
         const body = { _id: user._id, firstName: user.firstName };
         const token = jwt.sign({ user: body }, process.env.JWT_KEY);
         res.writeHead(302, {
           location: `http://localhost:3000?token=${token}`
         });
         return res.end();
-        // return res.json({ token: `Bearer ${token}` });
+      });
+    } catch (error) {
+      return next(error);
+    }
+
+    return false;
+  })(req, res, next);
+};
+
+const signUpGoogleRedirect = async (req, res, next) => {
+  passport.authenticate('googleSignUp', async (err, user, info) => {
+    try {
+      if (!user || err) {
+        res.writeHead(302, {
+          location: `http://localhost:3000?signUpError=${info.message}`
+        });
+        return res.end();
+      }
+
+      req.login(user, { session: false }, async error => {
+        if (error) {
+          return next(error);
+        }
+        const body = { _id: user._id, firstName: user.firstName };
+        const token = jwt.sign({ user: body }, process.env.JWT_KEY);
+        res.writeHead(302, {
+          location: `http://localhost:3000?token=${token}`
+        });
+        return res.end();
       });
     } catch (error) {
       return next(error);
@@ -167,6 +201,8 @@ module.exports = {
   logIn,
   forgotPassword,
   resetPassword,
+  signUpGoogle,
   loginGoogle,
-  loginGoogleRedirect
+  signUpGoogleRedirect,
+  logInGoogleRedirect
 };

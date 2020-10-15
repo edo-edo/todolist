@@ -5,6 +5,7 @@ const GoogleStrategy = require('passport-google-oauth20').Strategy;
 
 const User = require('../users/user.modal');
 const userValidation = require('../users/user.validation');
+// const { await } = require('signale');
 
 passport.use(
   'signup',
@@ -29,7 +30,8 @@ passport.use(
             firstName,
             lastName,
             email,
-            password
+            password,
+            service: 'webSite'
           });
           return done(null, newUser, { message: 'User is added successfully' });
         });
@@ -54,7 +56,7 @@ passport.use(
 
     async (email, password, done) => {
       try {
-        const user = await User.findOne({ email });
+        const user = await User.findOne({ email, service: 'webSite' });
 
         if (!user) {
           return done(null, false, { message: 'User not found' });
@@ -84,11 +86,11 @@ passport.deserializeUser((id, done) => {
 });
 
 passport.use(
-  'google',
+  'googleSignUp',
   new GoogleStrategy({
     clientID: process.env.GOOGLE_CLIENT_ID,
     clientSecret: process.env.GOOGLE_CLIENT_SECRET,
-    callbackURL: '/auth/google/callback'
+    callbackURL: '/auth/signup/google/callback'
   }, (async (accessToken, refreshToken, profile, done) => {
     const email = profile.emails[0].value;
     const firstName = profile.name.givenName;
@@ -97,11 +99,30 @@ passport.use(
       if (user) {
         return done(null, false, { message: `${email} already exists ` });
       }
-      const newuser = {
-        _id: '1223ferfefr343',
-        firstName
-      };
-      return done(null, newuser);
+      const newUser = await User.insertMany({
+        firstName,
+        lastName,
+        email,
+        service: 'google'
+      });
+      return done(null, newUser[0]);
+    });
+  }))
+);
+
+passport.use(
+  'googleLogin',
+  new GoogleStrategy({
+    clientID: process.env.GOOGLE_CLIENT_ID,
+    clientSecret: process.env.GOOGLE_CLIENT_SECRET,
+    callbackURL: '/auth/login/google/callback'
+  }, (async (accessToken, refreshToken, profile, done) => {
+    const email = profile.emails[0].value;
+    await User.findOne({ email, service: 'google' }).then(async user => {
+      if (!user) {
+        return done(null, false, { message: 'User not found ' });
+      }
+      return done(null, user);
     });
   }))
 );

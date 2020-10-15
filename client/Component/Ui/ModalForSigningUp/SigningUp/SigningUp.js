@@ -1,6 +1,7 @@
 import React, { useEffect } from 'react';
 import { useFormik } from 'formik';
 import { connect } from 'react-redux';
+import { useHistory } from 'react-router-dom';
 import PropTypes from 'prop-types';
 import * as Yup from 'yup';
 import {
@@ -10,20 +11,24 @@ import {
   Button,
   OutlinedInput,
   InputLabel,
-  FormControl
+  FormControl,
 } from '@material-ui/core/';
 
 import classes from './SigningUp.css';
 import * as actionTypes from '../../../../storage/constant';
+import GoogleButton from '../../GoogleButton/GoogleButton';
 
 const SigningUp = ({
   addUser, handleClose, clearError, error, authError, openLogin
 }) => {
+  const history = useHistory();
+
   useEffect(() => {
     if (authError) {
       handleClose();
     }
-    return () => clearError();
+    const path = history.location.pathname;
+    return () => { clearError(); history.push(path); };
   }, [authError]);
   const formik = useFormik({
     initialValues: {
@@ -150,6 +155,10 @@ const SigningUp = ({
             >
               Log In
             </Button>
+
+          </Grid>
+          <Grid item xs={5}>
+            <GoogleButton link={`${process.env.API_URL}/auth/signup/google`} />
           </Grid>
         </Grid>
       </form>

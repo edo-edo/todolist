@@ -1,6 +1,7 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
+import queryString from 'querystring';
 import {
   useHistory,
   Route,
@@ -22,13 +23,29 @@ import ModalForForgotPass from '../Ui/ModalForForgotPass/ModalForForgotPass';
 import ModalForResetPass from '../Ui/ModalForResetPass/ModalForResetPass';
 
 const Navigation = ({
-  user, isAuthenticated, logOut, clearError
+  user, isAuthenticated, logOut, clearError, signUpError, logInError
 }) => {
   const [isLogInOpen, setIsLogInOpen] = useState(false);
   const [isSignUpOpen, setIsSignUpOpen] = useState(false);
   const [isForgotPassOpen, setIsForgotPassOpen] = useState(false);
 
   const history = useHistory();
+
+  useEffect(() => {
+    const param = queryString.parse(history.location.search);
+    if (param['?token']) {
+      localStorage.setItem('jwtToken', `Bearer ${param['?token']}`);
+      history.push('/');
+    }
+    if (param['?logInError']) {
+      logInError(param['?logInError']);
+      setIsLogInOpen(true);
+    }
+    if (param['?signUpError']) {
+      signUpError(param['?signUpError']);
+      setIsSignUpOpen(true);
+    }
+  }, []);
 
   return (
     <div className={classes.AppBar}>
@@ -92,6 +109,8 @@ const mapStateToProps = ({ userReducer: state }) => ({
 const mapDispatchToProps = dispatch => ({
   logOut: () => dispatch({ type: actionTypes.LOG_OUT }),
   clearError: () => dispatch({ type: actionTypes.CLEAR_ERROR }),
+  signUpError: error => dispatch({ type: actionTypes.SIGN_UP_FAIL, payload: { message: error } }),
+  logInError: error => dispatch({ type: actionTypes.LOG_IN_FAIL, payload: { message: error } })
 });
 
 export default connect(mapStateToProps, mapDispatchToProps)(Navigation);

@@ -11,6 +11,7 @@ const userSchema = new Schema({
     unique: true,
   },
   password: String,
+  service: String,
   resetPassword: String
 }, { timestamps: true });
 

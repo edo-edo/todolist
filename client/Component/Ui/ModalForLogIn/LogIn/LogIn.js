@@ -2,6 +2,7 @@ import React, { useEffect } from 'react';
 import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
 import { useFormik } from 'formik';
+import { useHistory } from 'react-router-dom';
 import * as Yup from 'yup';
 import {
   Typography,
@@ -14,15 +15,20 @@ import {
 
 import classes from './LogIn.css';
 import * as actionTypes from '../../../../storage/constant';
+import GoogleButton from '../../GoogleButton/GoogleButton';
 
 const LogIn = ({
-  checkUser, error, handleClose, clearError, authError, openSignUp, openForgotPass, logInGoogle
+  checkUser, error, handleClose, clearError, authError, openSignUp, openForgotPass
 }) => {
+  const history = useHistory();
+
   useEffect(() => {
     if (authError) {
       handleClose();
     }
-    return () => clearError();
+    const path = history.location.pathname;
+
+    return () => { clearError(); history.push(path); };
   }, [authError]);
   const formik = useFormik({
     initialValues: {
@@ -118,15 +124,8 @@ const LogIn = ({
               Sign Up
             </Button>
           </Grid>
-          <Grid item xs={12}>
-            <Button
-              href={`${process.env.API_URL}/auth/google`}
-              // onClick={() => logInGoogle()}
-              variant="contained"
-            >
-              Google+
-            </Button>
-            <a href="/auth/google">GOOGLE+</a>
+          <Grid item xs={6}>
+            <GoogleButton link={`${process.env.API_URL}/auth/login/google`} />
           </Grid>
         </Grid>
       </form>
@@ -152,7 +151,6 @@ const mapStateToProps = ({ userReducer: state }) => ({
 
 const mapDispatchToProps = dispatch => ({
   checkUser: date => dispatch({ type: actionTypes.LOG_IN_START, payload: { date } }),
-  logInGoogle: () => dispatch({ type: actionTypes.LOG_IN_GOOGLE }),
   clearError: () => dispatch({ type: actionTypes.CLEAR_ERROR }),
 });
 
