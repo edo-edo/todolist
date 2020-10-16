@@ -92,21 +92,28 @@ passport.use(
     clientSecret: process.env.GOOGLE_CLIENT_SECRET,
     callbackURL: '/auth/signup/google/callback'
   }, (async (accessToken, refreshToken, profile, done) => {
-    const email = profile.emails[0].value;
-    const firstName = profile.name.givenName;
-    const lastName = profile.name.familyName;
-    await User.findOne({ email }).then(async user => {
-      if (user) {
-        return done(null, false, { message: `${email} already exists ` });
-      }
-      const newUser = await User.insertMany({
-        firstName,
-        lastName,
-        email,
-        provider: 'google'
+    try {
+      const email = profile.emails[0].value;
+      const firstName = profile.name.givenName;
+      const lastName = profile.name.familyName;
+
+      await User.findOne({ email }).then(async user => {
+        if (user) {
+          return done(null, false, { message: `${email} already exists ` });
+        }
+
+        const newUser = await User.insertMany({
+          firstName,
+          lastName,
+          email,
+          provider: 'google'
+        });
+        return done(null, newUser[0]);
       });
-      return done(null, newUser[0]);
-    });
+    } catch (err) {
+      return done(err);
+    }
+    return false;
   }))
 );
 
@@ -117,13 +124,20 @@ passport.use(
     clientSecret: process.env.GOOGLE_CLIENT_SECRET,
     callbackURL: '/auth/login/google/callback'
   }, (async (accessToken, refreshToken, profile, done) => {
-    const email = profile.emails[0].value;
-    await User.findOne({ email, provider: 'google' }).then(async user => {
-      if (!user) {
-        return done(null, false, { message: 'User not found ' });
-      }
-      return done(null, user);
-    });
+    try {
+      const email = profile.emails[0].value;
+
+      await User.findOne({ email, provider: 'google' }).then(async user => {
+        if (!user) {
+          return done(null, false, { message: 'User not found ' });
+        }
+
+        return done(null, user);
+      });
+    } catch (err) {
+      return done(err);
+    }
+    return false;
   }))
 );
 
@@ -135,26 +149,33 @@ passport.use(
     callbackURL: 'http://localhost:5000/auth/signup/facebook/callback',
     profileFields: ['displayName', 'name', 'emails']
   }, (async (accessToken, refreshToken, profile, done) => {
-    if (!profile.emails[0].value) {
-      return done(null, false, { message: 'You don\'t use email address on facebook ' });
-    }
-    const email = profile.emails[0].value;
-    const firstName = profile.name.givenName;
-    const lastName = profile.name.familyName;
-
-    await User.findOne({ email }).then(async user => {
-      if (user) {
-        return done(null, false, { message: `${email} already exists ` });
+    try {
+      if (!profile.emails[0].value) {
+        return done(null, false, { message: 'You don\'t use email address on facebook ' });
       }
-      const newUser = await User.insertMany({
-        firstName,
-        lastName,
-        email,
-        provider: 'facebook'
-      });
 
-      return done(null, newUser[0]);
-    });
+      const email = profile.emails[0].value;
+      const firstName = profile.name.givenName;
+      const lastName = profile.name.familyName;
+
+      await User.findOne({ email }).then(async user => {
+        if (user) {
+          return done(null, false, { message: `${email} already exists ` });
+        }
+
+        const newUser = await User.insertMany({
+          firstName,
+          lastName,
+          email,
+          provider: 'facebook'
+        });
+
+        return done(null, newUser[0]);
+      });
+    } catch (err) {
+      return done(err);
+    }
+
     return false;
   }))
 );
@@ -167,18 +188,24 @@ passport.use(
     callbackURL: 'http://localhost:5000/auth/login/facebook/callback',
     profileFields: ['displayName', 'name', 'emails']
   }, (async (accessToken, refreshToken, profile, done) => {
-    if (!profile.emails[0].value) {
-      return done(null, false, { message: 'You don\'t use email address on facebook ' });
-    }
-    const email = profile.emails[0].value;
-
-    await User.findOne({ email, provider: 'facebook' }).then(async user => {
-      if (!user) {
-        return done(null, false, { message: 'User not found ' });
+    try {
+      if (!profile.emails[0].value) {
+        return done(null, false, { message: 'You don\'t use email address on facebook ' });
       }
 
-      return done(null, user);
-    });
+      const email = profile.emails[0].value;
+
+      await User.findOne({ email, provider: 'facebook' }).then(async user => {
+        if (!user) {
+          return done(null, false, { message: 'User not found ' });
+        }
+
+        return done(null, user);
+      });
+    } catch (err) {
+      return done(err);
+    }
+
     return false;
   }))
 );

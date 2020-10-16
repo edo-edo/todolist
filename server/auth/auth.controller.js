@@ -81,8 +81,10 @@ const logInGoogleRedirect = async (req, res, next) => {
         if (error) {
           return next(error);
         }
+
         const body = { _id: user._id, firstName: user.firstName };
         const token = jwt.sign({ user: body }, process.env.JWT_KEY);
+
         res.writeHead(302, {
           location: `http://localhost:3000?token=${token}`
         });
@@ -110,8 +112,10 @@ const signUpGoogleRedirect = async (req, res, next) => {
         if (error) {
           return next(error);
         }
+
         const body = { _id: user._id, firstName: user.firstName };
         const token = jwt.sign({ user: body }, process.env.JWT_KEY);
+
         res.writeHead(302, {
           location: `http://localhost:3000?token=${token}`
         });
@@ -143,8 +147,10 @@ const signUpFacebookRedirect = async (req, res, next) => {
         if (error) {
           return next(error);
         }
+
         const body = { _id: user._id, firstName: user.firstName };
         const token = jwt.sign({ user: body }, process.env.JWT_KEY);
+
         res.writeHead(302, {
           location: `http://localhost:3000?token=${token}`
         });
@@ -172,8 +178,10 @@ const logInFacebookRedirect = async (req, res, next) => {
         if (error) {
           return next(error);
         }
+
         const body = { _id: user._id, firstName: user.firstName };
         const token = jwt.sign({ user: body }, process.env.JWT_KEY);
+
         res.writeHead(302, {
           location: `http://localhost:3000?token=${token}`
         });

@@ -73,7 +73,7 @@ const LogIn = ({
               </InputLabel>
               <OutlinedInput
                 id="email"
-                labelWidth={70}
+                labelWidth={45}
                 name="email"
                 onChange={formik.handleChange}
                 value={formik.values.email}

@@ -29,6 +29,7 @@ const SigningUp = ({
       handleClose();
     }
     const path = history.location.pathname;
+
     return () => { clearError(); history.push(path); };
   }, [authError]);
   const formik = useFormik({
@@ -110,7 +111,7 @@ const SigningUp = ({
               </InputLabel>
               <OutlinedInput
                 id="email"
-                labelWidth={70}
+                labelWidth={45}
                 onChange={formik.handleChange}
                 value={formik.values.email}
               />

@@ -49,7 +49,7 @@ const getTask = async (req, res) => {
         return res.json({ task });
       }
     } catch {
-      return res.status(500).send('failed to get task');
+      return res.status(403).send('failed to get task');
     }
   } catch (err) {
     signale.fatal('Fatal: failed to get task', err);
@@ -86,13 +86,17 @@ const updateTask = async (req, res) => {
 
     Joi.attempt(status, Joi.boolean());
 
-    const { nModified } = await Task.updateOne(
-      { _id: req.params.id, user: _id },
-      { status: !status }
-    );
+    try {
+      const { nModified } = await Task.updateOne(
+        { _id: req.params.id, user: _id },
+        { status: !status }
+      );
 
-    if (nModified === 0) {
-      return res.status(500).send('failed to update status');
+      if (nModified === 0) {
+        return res.status(403).send('failed to update status');
+      }
+    } catch {
+      return res.status(403).send('failed to update status');
     }
 
     return res.json({ message: 'status updated' });
