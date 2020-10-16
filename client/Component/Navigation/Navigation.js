@@ -15,12 +15,12 @@ import {
 } from '@material-ui/core';
 
 import classes from './Navigation.css';
-import ModalForSigningUp from '../Ui/ModalForSigningUp/ModalForSigningUp';
-import ModalForLogIn from '../Ui/ModalForLogIn/ModalForLogIn';
-import SignOut from '../Ui/SignOut/SignOut';
+import SigningUpModal from '../UI/Modal/SigningUpModal/SigningUpModal';
+import LogInModal from '../UI/Modal/LogInModal/LogInModal';
+import SignOut from '../UI/SignOut/SignOut';
 import * as actionTypes from '../../storage/constant';
-import ModalForForgotPass from '../Ui/ModalForForgotPass/ModalForForgotPass';
-import ModalForResetPass from '../Ui/ModalForResetPass/ModalForResetPass';
+import ForgotPasswordModal from '../UI/Modal/ForgotPasswordModal/ForgotPasswordModal';
+import ResetPasswordModal from '../UI/Modal/ResetPasswordModal/ResetPasswordModal';
 
 const Navigation = ({
   user, isAuthenticated, logOut, clearError, signUpError, logInError
@@ -70,24 +70,24 @@ const Navigation = ({
           </AppBar>
         </Grid>
       </header>
-      <ModalForSigningUp
+      <SigningUpModal
         open={isSignUpOpen}
         handleClose={() => { setIsSignUpOpen(false); clearError(); }}
         openLogin={() => setIsLogInOpen(true)}
       />
-      <ModalForLogIn
+      <LogInModal
         open={isLogInOpen}
         handleClose={() => { setIsLogInOpen(false); clearError(); }}
         openSignUp={() => setIsSignUpOpen(true)}
         openForgotPass={() => setIsForgotPassOpen(true)}
       />
-      <ModalForForgotPass
+      <ForgotPasswordModal
         open={isForgotPassOpen}
         handleClose={() => { setIsForgotPassOpen(false); clearError(); }}
       />
       <Switch>
         <Route exact path="/auth/reset-password">
-          <ModalForResetPass handleClose={() => history.push('/')} />
+          <ResetPasswordModal handleClose={() => history.push('/')} />
         </Route>
       </Switch>
     </div>
@@ -97,6 +97,8 @@ const Navigation = ({
 Navigation.propTypes = {
   user: PropTypes.objectOf(String, String).isRequired,
   isAuthenticated: PropTypes.bool.isRequired,
+  signUpError: PropTypes.func.isRequired,
+  logInError: PropTypes.func.isRequired,
   logOut: PropTypes.func.isRequired,
   clearError: PropTypes.func.isRequired
 };

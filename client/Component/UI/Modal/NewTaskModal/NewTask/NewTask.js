@@ -14,7 +14,7 @@ import {
 } from '@material-ui/core/';
 
 import classes from './NewTask.css';
-import * as actionTypes from '../../../../storage/constant';
+import * as actionTypes from '../../../../../storage/constant';
 
 const NewTask = ({ onAddTask }) => {
   const history = useHistory();

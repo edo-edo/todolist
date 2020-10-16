@@ -12,8 +12,8 @@ import {
   FormControl,
 } from '@material-ui/core/';
 
-import classes from './ForgotPass.css';
-import * as actionTypes from '../../../../storage/constant';
+import classes from './ForgotPassword.css';
+import * as actionTypes from '../../../../../storage/constant';
 
 const ForgotPass = ({
   error, isEmail, addEmail, clearError, loading

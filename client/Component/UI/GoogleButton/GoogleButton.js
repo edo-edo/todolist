@@ -9,7 +9,6 @@ const GoogleButton = ({ link }) => (
     avatar={<Avatar alt="Google" src={GoogleIcon} />}
     label="Google"
     component="a"
-    // href={`${process.env.API_URL}/auth/signup/google`}
     href={link}
     clickable
   />

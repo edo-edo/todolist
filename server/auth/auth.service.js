@@ -2,10 +2,10 @@ const passport = require('passport');
 const LocalStrategy = require('passport-local').Strategy;
 const nodemailer = require('nodemailer');
 const GoogleStrategy = require('passport-google-oauth20').Strategy;
+const FacebookStrategy = require('passport-facebook').Strategy;
 
 const User = require('../users/user.modal');
 const userValidation = require('../users/user.validation');
-// const { await } = require('signale');
 
 passport.use(
   'signup',
@@ -31,7 +31,7 @@ passport.use(
             lastName,
             email,
             password,
-            service: 'webSite'
+            provider: 'webSite'
           });
           return done(null, newUser, { message: 'User is added successfully' });
         });
@@ -56,7 +56,7 @@ passport.use(
 
     async (email, password, done) => {
       try {
-        const user = await User.findOne({ email, service: 'webSite' });
+        const user = await User.findOne({ email, provider: 'webSite' });
 
         if (!user) {
           return done(null, false, { message: 'User not found' });
@@ -103,7 +103,7 @@ passport.use(
         firstName,
         lastName,
         email,
-        service: 'google'
+        provider: 'google'
       });
       return done(null, newUser[0]);
     });
@@ -118,12 +118,68 @@ passport.use(
     callbackURL: '/auth/login/google/callback'
   }, (async (accessToken, refreshToken, profile, done) => {
     const email = profile.emails[0].value;
-    await User.findOne({ email, service: 'google' }).then(async user => {
+    await User.findOne({ email, provider: 'google' }).then(async user => {
       if (!user) {
         return done(null, false, { message: 'User not found ' });
       }
       return done(null, user);
     });
+  }))
+);
+
+passport.use(
+  'facebookSignUp',
+  new FacebookStrategy({
+    clientID: process.env.FACABOOK_APP_ID,
+    clientSecret: process.env.FACABOOK_APP_SECRET,
+    callbackURL: 'http://localhost:5000/auth/signup/facebook/callback',
+    profileFields: ['displayName', 'name', 'emails']
+  }, (async (accessToken, refreshToken, profile, done) => {
+    if (!profile.emails[0].value) {
+      return done(null, false, { message: 'You don\'t use email address on facebook ' });
+    }
+    const email = profile.emails[0].value;
+    const firstName = profile.name.givenName;
+    const lastName = profile.name.familyName;
+
+    await User.findOne({ email }).then(async user => {
+      if (user) {
+        return done(null, false, { message: `${email} already exists ` });
+      }
+      const newUser = await User.insertMany({
+        firstName,
+        lastName,
+        email,
+        provider: 'facebook'
+      });
+
+      return done(null, newUser[0]);
+    });
+    return false;
+  }))
+);
+
+passport.use(
+  'facebookLogIn',
+  new FacebookStrategy({
+    clientID: process.env.FACABOOK_APP_ID,
+    clientSecret: process.env.FACABOOK_APP_SECRET,
+    callbackURL: 'http://localhost:5000/auth/login/facebook/callback',
+    profileFields: ['displayName', 'name', 'emails']
+  }, (async (accessToken, refreshToken, profile, done) => {
+    if (!profile.emails[0].value) {
+      return done(null, false, { message: 'You don\'t use email address on facebook ' });
+    }
+    const email = profile.emails[0].value;
+
+    await User.findOne({ email, provider: 'facebook' }).then(async user => {
+      if (!user) {
+        return done(null, false, { message: 'User not found ' });
+      }
+
+      return done(null, user);
+    });
+    return false;
   }))
 );
 

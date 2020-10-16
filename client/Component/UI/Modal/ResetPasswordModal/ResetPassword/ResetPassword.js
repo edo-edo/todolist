@@ -14,8 +14,8 @@ import {
 } from '@material-ui/core/';
 import queryString from 'querystring';
 
-import classes from './ResetPass.css';
-import * as actionTypes from '../../../../storage/constant';
+import classes from './ResetPassword.css';
+import * as actionTypes from '../../../../../storage/constant';
 
 const ForgotPass = ({
   error, clearError, resetPassword, isAuthenticated

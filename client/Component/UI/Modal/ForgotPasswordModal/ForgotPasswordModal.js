@@ -7,17 +7,16 @@ import {
   DialogContent
 } from '@material-ui/core';
 
-import ResetPass from './ResetPass/ResetPass';
+import ForgotPassword from './ForgotPassword/ForgotPassword';
 
-const ModalForResetPass = ({ handleClose }) => (
+const ForgotPasswordModal = ({ open, handleClose }) => (
   <div>
     <Dialog
-      open
+      open={open}
       onClose={handleClose}
-      aria-labelledby="draggable-dialog-title"
     >
       <DialogContent dividers>
-        <ResetPass handleClose={handleClose} />
+        <ForgotPassword handleClose={handleClose} />
       </DialogContent>
 
       <DialogActions>
@@ -29,8 +28,9 @@ const ModalForResetPass = ({ handleClose }) => (
   </div>
 );
 
-ModalForResetPass.propTypes = {
+ForgotPasswordModal.propTypes = {
+  open: PropTypes.bool.isRequired,
   handleClose: PropTypes.func.isRequired
 };
 
-export default ModalForResetPass;
+export default ForgotPasswordModal;

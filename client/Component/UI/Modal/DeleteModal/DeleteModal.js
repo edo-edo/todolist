@@ -12,9 +12,9 @@ import {
   DialogTitle
 } from '@material-ui/core';
 
-import * as actionTypes from '../../../storage/constant';
+import * as actionTypes from '../../../../storage/constant';
 
-const Modal = ({ handleClose, onRemoveTask }) => {
+const DeleteModal = ({ handleClose, onRemoveTask }) => {
   const { id } = useParams();
   const history = useHistory();
   return (
@@ -55,7 +55,7 @@ const Modal = ({ handleClose, onRemoveTask }) => {
   );
 };
 
-Modal.propTypes = {
+DeleteModal.propTypes = {
   onRemoveTask: PropTypes.func.isRequired,
   handleClose: PropTypes.func.isRequired,
 };
@@ -64,4 +64,4 @@ const mapDispatchToProps = dispatch => ({
   onRemoveTask: id => dispatch({ type: actionTypes.REMOVE_TASK_START, payload: { id } })
 });
 
-export default connect(null, mapDispatchToProps)(Modal);
+export default connect(null, mapDispatchToProps)(DeleteModal);

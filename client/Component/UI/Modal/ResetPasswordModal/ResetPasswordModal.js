@@ -7,18 +7,17 @@ import {
   DialogContent
 } from '@material-ui/core';
 
-import LogIn from './LogIn/LogIn';
+import ResetPassword from './ResetPassword/ResetPassword';
 
-const ModalForLogIn = ({
-  open, handleClose, openSignUp, openForgotPass
-}) => (
+const ResetPasswordModal = ({ handleClose }) => (
   <div>
     <Dialog
-      open={open}
+      open
       onClose={handleClose}
+      aria-labelledby="draggable-dialog-title"
     >
       <DialogContent dividers>
-        <LogIn handleClose={handleClose} openSignUp={openSignUp} openForgotPass={openForgotPass} />
+        <ResetPassword handleClose={handleClose} />
       </DialogContent>
 
       <DialogActions>
@@ -30,11 +29,8 @@ const ModalForLogIn = ({
   </div>
 );
 
-ModalForLogIn.propTypes = {
-  open: PropTypes.bool.isRequired,
-  openForgotPass: PropTypes.func.isRequired,
-  openSignUp: PropTypes.func.isRequired,
+ResetPasswordModal.propTypes = {
   handleClose: PropTypes.func.isRequired
 };
 
-export default ModalForLogIn;
+export default ResetPasswordModal;

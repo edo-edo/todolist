@@ -10,9 +10,9 @@ import {
   DialogTitle
 } from '@material-ui/core';
 
-import * as actionTypes from '../../../storage/constant';
+import * as actionTypes from '../../../../storage/constant';
 
-const Modal = ({ message, logOut, clearTaskError }) => {
+const ErrorModal = ({ message, logOut, clearTaskError }) => {
   useEffect(() => {
     if (message === 'Unauthorized') {
       logOut();
@@ -48,7 +48,7 @@ const Modal = ({ message, logOut, clearTaskError }) => {
   );
 };
 
-Modal.propTypes = {
+ErrorModal.propTypes = {
   message: PropTypes.string.isRequired,
   logOut: PropTypes.func.isRequired,
   clearTaskError: PropTypes.func.isRequired
@@ -58,4 +58,4 @@ const mapDispatchToProps = dispatch => ({
   clearTaskError: () => dispatch({ type: actionTypes.CLEAR_TASK_ERROR })
 });
 
-export default connect(null, mapDispatchToProps)(Modal);
+export default connect(null, mapDispatchToProps)(ErrorModal);

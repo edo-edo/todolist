@@ -18,11 +18,11 @@ import {
 } from '@material-ui/core';
 
 import Task from './Task/Task';
-import ModalForDelete from '../Component/Ui/ModalForDelete/ModalForDelete';
-import ModalForNewTask from '../Component/Ui/ModalForNewTask/ModalForNewTask';
-import ModalForError from '../Component/Ui/ModalForError/ModalForError';
+import DeleteModal from '../Component/UI/Modal/DeleteModal/DeleteModal';
+import NewTaskModal from '../Component/UI/Modal/NewTaskModal/NewTaskModal';
+import ErrorModal from '../Component/UI/Modal/ErrorModal/ErrorModal';
 import * as actionTypes from '../storage/constant';
-import Spinner from '../Component/Ui/Spinner/Spinner';
+import Spinner from '../Component/UI/Spinner/Spinner';
 
 const Tasks = ({
   tasks, loading, fetchTasks, error
@@ -44,7 +44,7 @@ const Tasks = ({
       )}
       {
         error.length !== 0 && (
-          <ModalForError message={error} />
+          <ErrorModal message={error} />
         )
       }
       <TableContainer>
@@ -81,12 +81,12 @@ const Tasks = ({
       </Button>
       <Switch>
         <Route path="/new-task">
-          <ModalForNewTask
+          <NewTaskModal
             handleClose={() => history.push('/')}
           />
         </Route>
         <Route path="/delete/:id">
-          <ModalForDelete
+          <DeleteModal
             handleClose={() => history.push('/')}
           />
         </Route>

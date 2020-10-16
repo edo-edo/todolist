@@ -125,6 +125,68 @@ const signUpGoogleRedirect = async (req, res, next) => {
   })(req, res, next);
 };
 
+const signUpFacebook = passport.authenticate('facebookSignUp', { scope: ['email'] });
+
+const logInFacebook = passport.authenticate('facebookLogIn', { scope: ['email'] });
+
+const signUpFacebookRedirect = async (req, res, next) => {
+  passport.authenticate('facebookSignUp', async (err, user, info) => {
+    try {
+      if (!user || err) {
+        res.writeHead(302, {
+          location: `http://localhost:3000?signUpError=${info.message}`
+        });
+        return res.end();
+      }
+
+      req.login(user, { session: false }, async error => {
+        if (error) {
+          return next(error);
+        }
+        const body = { _id: user._id, firstName: user.firstName };
+        const token = jwt.sign({ user: body }, process.env.JWT_KEY);
+        res.writeHead(302, {
+          location: `http://localhost:3000?token=${token}`
+        });
+        return res.end();
+      });
+    } catch (error) {
+      return next(error);
+    }
+
+    return false;
+  })(req, res, next);
+};
+
+const logInFacebookRedirect = async (req, res, next) => {
+  passport.authenticate('facebookLogIn', async (err, user, info) => {
+    try {
+      if (!user || err) {
+        res.writeHead(302, {
+          location: `http://localhost:3000?logInError=${info.message}`
+        });
+        return res.end();
+      }
+
+      req.login(user, { session: false }, async error => {
+        if (error) {
+          return next(error);
+        }
+        const body = { _id: user._id, firstName: user.firstName };
+        const token = jwt.sign({ user: body }, process.env.JWT_KEY);
+        res.writeHead(302, {
+          location: `http://localhost:3000?token=${token}`
+        });
+        return res.end();
+      });
+    } catch (error) {
+      return next(error);
+    }
+
+    return false;
+  })(req, res, next);
+};
+
 const forgotPassword = async (req, res) => {
   const { email } = req.body;
   try {
@@ -204,5 +266,9 @@ module.exports = {
   signUpGoogle,
   loginGoogle,
   signUpGoogleRedirect,
-  logInGoogleRedirect
+  logInGoogleRedirect,
+  signUpFacebook,
+  logInFacebook,
+  signUpFacebookRedirect,
+  logInFacebookRedirect
 };

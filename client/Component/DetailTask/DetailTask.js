@@ -11,8 +11,8 @@ import {
 
 import classes from './DetailTask.css';
 import * as actionTypes from '../../storage/constant';
-import ModalForError from '../Ui/ModalForError/ModalForError';
-import Spinner from '../Ui/Spinner/Spinner';
+import ErrorModal from '../UI/Modal/ErrorModal/ErrorModal';
+import Spinner from '../UI/Spinner/Spinner';
 
 const DetailTask = ({
   task, fetchTask, loading, error
@@ -29,7 +29,7 @@ const DetailTask = ({
     <div className={classes.Root}>
       {
         error.length !== 0 && (
-          <ModalForError message={error} />
+          <ErrorModal message={error} />
         )
       }
       <Grid container spacing={5}>
