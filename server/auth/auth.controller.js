@@ -8,53 +8,65 @@ const signale = require('signale');
 const User = require('../users/user.modal');
 const sendMail = require('./auth.service');
 
-const signUp = async (req, res, next) => {
-  passport.authenticate('signup', async (err, user, info) => {
-    try {
-      if (!user || err) {
-        return res.status(400).send(info.message);
-      }
+const sendResponseOAuth2 = async (req, res, next, err, user, info, errType) => {
+  if (!user || err) {
+    res.writeHead(302, {
+      location: `${process.env.WEBSITE_URL}?${errType}=${info.message}`
+    });
+    return res.end();
+  }
 
-      req.logIn(user, { session: false }, async error => {
-        if (error) {
-          return next(error);
-        }
-
-        const body = { _id: user._id, firstName: user.firstName };
-        const token = jwt.sign({ user: body }, process.env.JWT_KEY);
-
-        return res.json({ token: `Bearer ${token}` });
-      });
-    } catch (error) {
+  req.login(user, { session: false }, async error => {
+    if (error) {
       return next(error);
     }
 
-    return false;
+    const body = { _id: user._id, firstName: user.firstName };
+    const token = jwt.sign({ user: body }, process.env.JWT_KEY);
+
+    res.writeHead(302, {
+      location: `${process.env.WEBSITE_URL}?token=${token}`
+    });
+    return res.end();
+  });
+  return false;
+};
+
+const sendResponseLocalStrategy = async (req, res, next, err, user, info) => {
+  if (!user || err) {
+    return res.status(400).send(info.message);
+  }
+
+  req.login(user, { session: false }, async error => {
+    if (error) {
+      return next(error);
+    }
+
+    const body = { _id: user._id, firstName: user.firstName };
+    const token = jwt.sign({ user: body }, process.env.JWT_KEY);
+
+    return res.json({ token: `Bearer ${token}` });
+  });
+  return false;
+};
+
+const signUp = async (req, res, next) => {
+  passport.authenticate('signup', async (err, user, info) => {
+    try {
+      return sendResponseLocalStrategy(req, res, next, err, user, info);
+    } catch (error) {
+      return next(error);
+    }
   })(req, res, next);
 };
 
 const logIn = async (req, res, next) => {
   passport.authenticate('login', async (err, user, info) => {
     try {
-      if (!user || err) {
-        return res.status(400).send(info.message);
-      }
-
-      req.login(user, { session: false }, async error => {
-        if (error) {
-          return next(error);
-        }
-
-        const body = { _id: user._id, firstName: user.firstName };
-        const token = jwt.sign({ user: body }, process.env.JWT_KEY);
-
-        return res.json({ token: `Bearer ${token}` });
-      });
+      return sendResponseLocalStrategy(req, res, next, err, user, info);
     } catch (error) {
       return next(error);
     }
-
-    return false;
   })(req, res, next);
 };
 
@@ -69,62 +81,20 @@ const loginGoogle = passport.authenticate('googleLogin', {
 const logInGoogleRedirect = async (req, res, next) => {
   passport.authenticate('googleLogin', async (err, user, info) => {
     try {
-      if (!user || err) {
-        res.writeHead(302, {
-          location: `http://localhost:3000?logInError=${info.message}`
-        });
-        return res.end();
-      }
-
-      req.login(user, { session: false }, async error => {
-        if (error) {
-          return next(error);
-        }
-
-        const body = { _id: user._id, firstName: user.firstName };
-        const token = jwt.sign({ user: body }, process.env.JWT_KEY);
-
-        res.writeHead(302, {
-          location: `http://localhost:3000?token=${token}`
-        });
-        return res.end();
-      });
+      return sendResponseOAuth2(req, res, next, err, user, info, 'logInError');
     } catch (error) {
       return next(error);
     }
-
-    return false;
   })(req, res, next);
 };
 
 const signUpGoogleRedirect = async (req, res, next) => {
   passport.authenticate('googleSignUp', async (err, user, info) => {
     try {
-      if (!user || err) {
-        res.writeHead(302, {
-          location: `http://localhost:3000?signUpError=${info.message}`
-        });
-        return res.end();
-      }
-
-      req.login(user, { session: false }, async error => {
-        if (error) {
-          return next(error);
-        }
-
-        const body = { _id: user._id, firstName: user.firstName };
-        const token = jwt.sign({ user: body }, process.env.JWT_KEY);
-
-        res.writeHead(302, {
-          location: `http://localhost:3000?token=${token}`
-        });
-        return res.end();
-      });
+      return sendResponseOAuth2(req, res, next, err, user, info, 'signUpError');
     } catch (error) {
       return next(error);
     }
-
-    return false;
   })(req, res, next);
 };
 
@@ -132,65 +102,23 @@ const signUpFacebook = passport.authenticate('facebookSignUp', { scope: ['email'
 
 const logInFacebook = passport.authenticate('facebookLogIn', { scope: ['email'] });
 
-const signUpFacebookRedirect = async (req, res, next) => {
-  passport.authenticate('facebookSignUp', async (err, user, info) => {
-    try {
-      if (!user || err) {
-        res.writeHead(302, {
-          location: `http://localhost:3000?signUpError=${info.message}`
-        });
-        return res.end();
-      }
-
-      req.login(user, { session: false }, async error => {
-        if (error) {
-          return next(error);
-        }
-
-        const body = { _id: user._id, firstName: user.firstName };
-        const token = jwt.sign({ user: body }, process.env.JWT_KEY);
-
-        res.writeHead(302, {
-          location: `http://localhost:3000?token=${token}`
-        });
-        return res.end();
-      });
-    } catch (error) {
-      return next(error);
-    }
-
-    return false;
-  })(req, res, next);
-};
-
 const logInFacebookRedirect = async (req, res, next) => {
   passport.authenticate('facebookLogIn', async (err, user, info) => {
     try {
-      if (!user || err) {
-        res.writeHead(302, {
-          location: `http://localhost:3000?logInError=${info.message}`
-        });
-        return res.end();
-      }
-
-      req.login(user, { session: false }, async error => {
-        if (error) {
-          return next(error);
-        }
-
-        const body = { _id: user._id, firstName: user.firstName };
-        const token = jwt.sign({ user: body }, process.env.JWT_KEY);
-
-        res.writeHead(302, {
-          location: `http://localhost:3000?token=${token}`
-        });
-        return res.end();
-      });
+      return sendResponseOAuth2(req, res, next, err, user, info, 'logInError');
     } catch (error) {
       return next(error);
     }
+  })(req, res, next);
+};
 
-    return false;
+const signUpFacebookRedirect = async (req, res, next) => {
+  passport.authenticate('facebookSignUp', async (err, user, info) => {
+    try {
+      return sendResponseOAuth2(req, res, next, err, user, info, 'signUpError');
+    } catch (error) {
+      return next(error);
+    }
   })(req, res, next);
 };
 

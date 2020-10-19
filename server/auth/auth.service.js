@@ -98,24 +98,30 @@ passport.use(
       const firstName = profile.name.givenName;
       const lastName = profile.name.familyName;
 
-      await User.findOne({ email }).then(async user => {
-        if (user) {
-          return done(null, false, { message: `${email} already exists ` });
-        }
+      await userValidation.validateAsync({
+        firstName,
+        lastName,
+        email,
+        provider: 'google'
+      }, { abortEarly: false });
 
-        const newUser = await User.insertMany({
-          firstName,
-          lastName,
-          email,
-          provider: 'google'
-        });
+      const user = await User.findOne({ email });
 
-        return done(null, newUser[0]);
+      if (user) {
+        return done(null, false, { message: `${email} already exists ` });
+      }
+
+      const newUser = await User.create({
+        firstName,
+        lastName,
+        email,
+        provider: 'google'
       });
+
+      return done(null, newUser);
     } catch (err) {
       return done(err);
     }
-    return false;
   }))
 );
 
@@ -129,17 +135,16 @@ passport.use(
     try {
       const email = profile.emails[0].value;
 
-      await User.findOne({ email, provider: 'google' }).then(async user => {
-        if (!user) {
-          return done(null, false, { message: 'User not found ' });
-        }
+      const user = await User.findOne({ email });
 
-        return done(null, user);
-      });
+      if (!user) {
+        return done(null, false, { message: 'User not found ' });
+      }
+
+      return done(null, user);
     } catch (err) {
       return done(err);
     }
-    return false;
   }))
 );
 
@@ -148,7 +153,7 @@ passport.use(
   new FacebookStrategy({
     clientID: process.env.FACABOOK_APP_ID,
     clientSecret: process.env.FACABOOK_APP_SECRET,
-    callbackURL: 'http://localhost:5000/auth/signup/facebook/callback',
+    callbackURL: '/auth/signup/facebook/callback',
     profileFields: ['displayName', 'name', 'emails']
   }, (async (accessToken, refreshToken, profile, done) => {
     try {
@@ -160,25 +165,30 @@ passport.use(
       const firstName = profile.name.givenName;
       const lastName = profile.name.familyName;
 
-      await User.findOne({ email }).then(async user => {
-        if (user) {
-          return done(null, false, { message: `${email} already exists ` });
-        }
+      await userValidation.validateAsync({
+        firstName,
+        lastName,
+        email,
+        provider: 'facebook'
+      }, { abortEarly: false });
 
-        const newUser = await User.insertMany({
-          firstName,
-          lastName,
-          email,
-          provider: 'facebook'
-        });
+      const user = await User.findOne({ email });
 
-        return done(null, newUser[0]);
+      if (user) {
+        return done(null, false, { message: `${email} already exists ` });
+      }
+
+      const newUser = await User.create({
+        firstName,
+        lastName,
+        email,
+        provider: 'facebook'
       });
+
+      return done(null, newUser);
     } catch (err) {
       return done(err);
     }
-
-    return false;
   }))
 );
 
@@ -187,7 +197,7 @@ passport.use(
   new FacebookStrategy({
     clientID: process.env.FACABOOK_APP_ID,
     clientSecret: process.env.FACABOOK_APP_SECRET,
-    callbackURL: 'http://localhost:5000/auth/login/facebook/callback',
+    callbackURL: '/auth/login/facebook/callback',
     profileFields: ['displayName', 'name', 'emails']
   }, (async (accessToken, refreshToken, profile, done) => {
     try {
@@ -197,18 +207,16 @@ passport.use(
 
       const email = profile.emails[0].value;
 
-      await User.findOne({ email, provider: 'facebook' }).then(async user => {
-        if (!user) {
-          return done(null, false, { message: 'User not found ' });
-        }
+      const user = await User.findOne({ email });
 
-        return done(null, user);
-      });
+      if (!user) {
+        return done(null, false, { message: 'User not found ' });
+      }
+
+      return done(null, user);
     } catch (err) {
       return done(err);
     }
-
-    return false;
   }))
 );
 
