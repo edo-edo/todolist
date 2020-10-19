@@ -42,41 +42,36 @@ const createTask = async (req, res) => {
 const getTask = async (req, res) => {
   try {
     const { _id } = req.user;
-    try {
-      const task = await Task.findOne({ _id: req.params.id, user: _id }, { __v: 0 });
 
-      if (task) {
-        return res.json({ task });
-      }
-    } catch {
-      return res.status(403).send('failed to get task');
+    const task = await Task.findOne({ _id: req.params.id, user: _id }, { __v: 0 });
+
+    if (task) {
+      return res.json({ task });
     }
+
+    return res.status(403).send('failed to get task');
   } catch (err) {
     signale.fatal('Fatal: failed to get task', err);
 
     return res.status(500).send('failed to get task');
   }
-  return false;
 };
 
 const removeTask = async (req, res) => {
   try {
     const { _id } = req.user;
-    try {
-      const { deletedCount } = await Task.deleteOne({ _id: req.params.id, user: _id });
+    const { deletedCount } = await Task.deleteOne({ _id: req.params.id, user: _id });
 
-      if (deletedCount === 1) {
-        return res.json({ message: 'task deleted' });
-      }
-    } catch {
-      return res.status(403).send('failed to delete task');
+    if (deletedCount === 1) {
+      return res.json({ message: 'task deleted' });
     }
+
+    return res.status(403).send('failed to delete task');
   } catch (err) {
     signale.fatal('Fatal: failed to delete task', err);
 
     return res.status(500).send('failed to delete task');
   }
-  return false;
 };
 
 const updateTask = async (req, res) => {
@@ -86,20 +81,16 @@ const updateTask = async (req, res) => {
 
     Joi.attempt(status, Joi.boolean());
 
-    try {
-      const { nModified } = await Task.updateOne(
-        { _id: req.params.id, user: _id },
-        { status: !status }
-      );
+    const { nModified } = await Task.updateOne(
+      { _id: req.params.id, user: _id },
+      { status: !status }
+    );
 
-      if (nModified === 0) {
-        return res.status(403).send('failed to update status');
-      }
-    } catch {
-      return res.status(403).send('failed to update status');
+    if (nModified === 1) {
+      return res.json({ message: 'status updated' });
     }
 
-    return res.json({ message: 'status updated' });
+    return res.status(403).send('failed to update status');
   } catch (err) {
     signale.fatal('Fatal: failed to update status', err);
 

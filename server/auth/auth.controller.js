@@ -5,7 +5,6 @@ const jwtDecode = require('jwt-decode');
 const bcrypt = require('bcryptjs');
 const signale = require('signale');
 
-require('./auth.service');
 const User = require('../users/user.modal');
 const sendMail = require('./auth.service');
 
@@ -198,7 +197,7 @@ const logInFacebookRedirect = async (req, res, next) => {
 const forgotPassword = async (req, res) => {
   const { email } = req.body;
   try {
-    const user = await User.findOne({ email });
+    const user = await User.findOne({ email, provider: 'website' });
 
     if (!user) {
       return res.status(400).send('User not found');
@@ -258,6 +257,7 @@ const resetPassword = async (req, res) => {
 
       return res.json({ token: `Bearer ${newtoken}` });
     }
+
     return res.status(400).send('failed to update password');
   } catch (err) {
     signale.fatal('Error:failed to update password', err);

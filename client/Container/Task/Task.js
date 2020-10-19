@@ -19,6 +19,7 @@ const Task = ({
   const styleTitle = classNames(classes.Title, {
     [classes.TitleOverCross]: status
   });
+
   return (
     <TableRow>
       <TableCell component="th" scope="row">

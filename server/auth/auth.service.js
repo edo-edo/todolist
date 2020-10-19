@@ -31,7 +31,7 @@ passport.use(
             lastName,
             email,
             password,
-            provider: 'webSite'
+            provider: 'website'
           });
           return done(null, newUser, { message: 'User is added successfully' });
         });
@@ -56,7 +56,7 @@ passport.use(
 
     async (email, password, done) => {
       try {
-        const user = await User.findOne({ email, provider: 'webSite' });
+        const user = await User.findOne({ email, provider: 'website' });
 
         if (!user) {
           return done(null, false, { message: 'User not found' });
@@ -75,6 +75,7 @@ passport.use(
     }
   )
 );
+
 passport.serializeUser((user, done) => {
   done(null, user.id);
 });
@@ -108,6 +109,7 @@ passport.use(
           email,
           provider: 'google'
         });
+
         return done(null, newUser[0]);
       });
     } catch (err) {
@@ -229,7 +231,7 @@ const sendMail = async (user, token) => {
     subject: 'reset password ✔',
     html: `<h1> Hello ${user.firstName} </h1>
     <p> If you requested to reset password please visit this link </p>
-    <a href=http://localhost:3000/auth/reset-password?token=${token}> reset password </a>`
+    <a href=http://localhost:3000/auth/reset-password?resetToken=${token}> reset password </a>`
   });
 
   return info;

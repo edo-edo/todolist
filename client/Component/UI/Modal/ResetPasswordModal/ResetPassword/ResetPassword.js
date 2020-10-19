@@ -43,7 +43,7 @@ const ForgotPass = ({
     }),
     onSubmit: values => {
       const param = queryString.parse(location.search);
-      resetPassword(values.password, values.passwordConfirmation, param['?token']);
+      resetPassword(values.password, values.passwordConfirmation, param['?resetToken']);
     },
   });
   return (

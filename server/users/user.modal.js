@@ -16,9 +16,11 @@ const userSchema = new Schema({
 }, { timestamps: true });
 
 userSchema.pre('save', async function save(next) {
-  const hash = await bcrypt.hash(this.password, 10);
+  if (this.provider === 'website') {
+    const hash = await bcrypt.hash(this.password, 10);
 
-  this.password = hash;
+    this.password = hash;
+  }
 
   next();
 });

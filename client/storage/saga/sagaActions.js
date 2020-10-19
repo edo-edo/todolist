@@ -11,7 +11,6 @@ import {
   logInUserApi,
   foundEmailApi,
   resetPasswordApi,
-  logInUserGoogleApi
 } from './Apis/Apis';
 
 export function* fetchTasks() {
@@ -142,8 +141,4 @@ export function* resetPassword(action) {
   } catch (err) {
     yield put({ type: actionTypes.RESET_PASSWORD_FAIL, payload: { message: err.response.data } });
   }
-}
-
-export function* logInUserGoogle() {
-  yield call(logInUserGoogleApi);
 }

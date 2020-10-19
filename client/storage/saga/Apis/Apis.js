@@ -31,16 +31,14 @@ export const logInUserApi = action => {
   return axios.post(`${API_URL}/auth/login`, { email, password });
 };
 
-export const logInUserGoogleApi = () => axios.get(`${API_URL}/auth/google/callback`);
-
 export const foundEmailApi = action => {
   const { email } = action.payload;
 
-  return axios.post(`${API_URL}/auth/forgot_password`, { email });
+  return axios.post(`${API_URL}/auth/forgot-password`, { email });
 };
 
 export const resetPasswordApi = action => {
   const { password, rePassword, token } = action.payload;
 
-  return axios.post(`${API_URL}/auth/reset_password`, { password, rePassword, token });
+  return axios.post(`${API_URL}/auth/reset-password`, { password, rePassword, token });
 };

@@ -5,7 +5,7 @@ const userValidation = Joi.object({
   lastName: Joi.string().required().min(5).max(50),
   email: Joi.string().email().required().min(5),
   provider: Joi.string(),
-  password: Joi.string().required().min(6).regex(RegExp('^[a-zA-Z0-9]'))
+  password: Joi.string().min(6).regex(RegExp('^[a-zA-Z0-9]'))
     .message('You password is week'),
   resetPassword: Joi.string
 });
