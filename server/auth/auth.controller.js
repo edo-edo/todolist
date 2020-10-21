@@ -83,6 +83,8 @@ const logInGoogleRedirect = async (req, res, next) => {
     try {
       return sendResponseOAuth2(req, res, next, err, user, info, 'logInError');
     } catch (error) {
+      signale.fatal('Error: Log in google user', error);
+
       return next(error);
     }
   })(req, res, next);
@@ -93,6 +95,8 @@ const signUpGoogleRedirect = async (req, res, next) => {
     try {
       return sendResponseOAuth2(req, res, next, err, user, info, 'signUpError');
     } catch (error) {
+      signale.fatal('Error: Sign Up google user', error);
+
       return next(error);
     }
   })(req, res, next);
@@ -107,6 +111,8 @@ const logInFacebookRedirect = async (req, res, next) => {
     try {
       return sendResponseOAuth2(req, res, next, err, user, info, 'logInError');
     } catch (error) {
+      signale.fatal('Error: Log In facebook user', error);
+
       return next(error);
     }
   })(req, res, next);
@@ -117,6 +123,8 @@ const signUpFacebookRedirect = async (req, res, next) => {
     try {
       return sendResponseOAuth2(req, res, next, err, user, info, 'signUpError');
     } catch (error) {
+      signale.fatal('Error: Sign Up facebook user', error);
+
       return next(error);
     }
   })(req, res, next);
