@@ -3,23 +3,30 @@ const htmlWebpackPlugin = require('html-webpack-plugin');
 const miniCssExtractPlugin = require('mini-css-extract-plugin');
 const dotenv = require('dotenv-webpack');
 
+const BUILD_DIR = path.resolve(__dirname, './dist/');
+const APP_DIR = path.resolve(__dirname, './client/index.js');
+
+
+const nodeExternals = require('webpack-node-externals');
+
 module.exports = {
-  mode: 'development',
-  entry: ["@babel/polyfill", "./client/index.js"],
-  node: {
-    fs: "empty"
-},
-  devServer: {
+  entry: {
+    main: APP_DIR
+  },
+  output: {
+    filename: 'main.bundle.js',
+    path: BUILD_DIR
+  },
+    mode: 'development',
+    devServer: {
     contentBase: './dist',
     port: 3000,
     hot: true,
     historyApiFallback: true
   },
-  output: {
-    filename: '[name].bundle.js',
-    publicPath: '/',
-    path: path.resolve(__dirname, 'dist'),
-  },
+
+
+
   plugins: [
     new htmlWebpackPlugin({
       template: "./client/index.html",

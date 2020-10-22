@@ -239,7 +239,7 @@ const sendMail = async (user, token) => {
     subject: 'reset password ✔',
     html: `<h1> Hello ${user.firstName} </h1>
     <p> If you requested to reset password please visit this link </p>
-    <a href=http://localhost:3000/auth/reset-password?resetToken=${token}> reset password </a>`
+    <a href=${process.env.API_URL}/auth/reset-password?resetToken=${token}> reset password </a>`
   });
 
   return info;

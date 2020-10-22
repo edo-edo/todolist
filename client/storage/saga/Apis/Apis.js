@@ -2,7 +2,7 @@ import axios from 'axios';
 
 const { API_URL } = process.env;
 
-export const fetchTasksApi = () => axios.get(`${API_URL}/tasks`);
+export const fetchTasksApi = () => axios.get('/tasks');
 
 export const fetchTaskApi = action => axios.get(`${API_URL}/tasks/${action.payload.id}`);
 
