@@ -6,9 +6,6 @@ const dotenv = require('dotenv-webpack');
 const BUILD_DIR = path.resolve(__dirname, './dist/');
 const APP_DIR = path.resolve(__dirname, './client/index.js');
 
-
-const nodeExternals = require('webpack-node-externals');
-
 module.exports = {
   entry: {
     main: APP_DIR
