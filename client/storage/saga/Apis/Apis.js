@@ -2,7 +2,7 @@ import axios from 'axios';
 
 const { API_URL } = process.env;
 
-export const fetchTasksApi = () => axios.get('/tasks');
+export const fetchTasksApi = () => axios.get('api/tasks');
 
 export const fetchTaskApi = action => axios.get(`${API_URL}/tasks/${action.payload.id}`);
 
@@ -20,7 +20,7 @@ export const signUpUserApi = action => {
     password
   } = action.payload.user;
 
-  return axios.post(`${API_URL}/auth/signup`, {
+  return axios.post('api/auth/signup', {
     firstName, lastName, email, password
   });
 };
@@ -28,7 +28,7 @@ export const signUpUserApi = action => {
 export const logInUserApi = action => {
   const { email, password } = action.payload.date;
 
-  return axios.post(`${API_URL}/auth/login`, { email, password });
+  return axios.post('api/auth/login', { email, password });
 };
 
 export const foundEmailApi = action => {

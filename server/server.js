@@ -26,8 +26,8 @@ app.use(
 );
 app.use(passport.initialize());
 
-app.use('/tasks', taskRouter);
-app.use('/auth', authRouter);
+app.use('api/tasks', taskRouter);
+app.use('api/auth', authRouter);
 
 app.listen(process.env.PORT, () => signale.success(`server started ${process.env.PORT}`));
 

@@ -11,7 +11,7 @@ module.exports = {
     main: APP_DIR
   },
   output: {
-    filename: 'main.bundle.js',
+    filename: '[name].bundle.js',
     path: BUILD_DIR
   },
     mode: 'development',
