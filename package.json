@@ -5,15 +5,11 @@
   "private": "true",
   "main": "server.js",
   "scripts": {
-    "start": "webpack-dev-server --open & nodemon ./server/server.js",
+    "start": "webpack-dev-server --mode production --hot",
     "back": "nodemon ./server/server.js",
-    "build": "webpack --mode production",
+    "build": "webpack --mode production && nodemon ./server/server.js",
+    "front": "webpack-dev-server --config ./webpack.config.js --mode development && nodemon ./server/server.js",
     "lint": "eslint ."
-  },
-  "nodemonConfig": {
-    "ignore": [
-      "client/*"
-    ]
   },
   "author": "",
   "license": "ISC",
@@ -39,7 +35,8 @@
     "style-loader": "^1.2.1",
     "webpack": "^4.44.1",
     "webpack-cli": "^3.3.12",
-    "webpack-dev-server": "^3.11.0"
+    "webpack-dev-server": "^3.11.0",
+    "webpack-hot-middleware": "^2.25.0"
   },
   "dependencies": {
     "@babel/polyfill": "^7.11.5",
@@ -70,6 +67,7 @@
     "prop-types": "^15.7.2",
     "react": "^16.13.1",
     "react-dom": "^16.13.1",
+    "react-hot-loader": "^4.13.0",
     "react-redux": "^7.2.1",
     "react-router-dom": "^5.2.0",
     "redux": "^4.0.5",

@@ -1,16 +1,14 @@
 import axios from 'axios';
 
-const { API_URL } = process.env;
+export const fetchTasksApi = () => axios.get('/api/tasks');
 
-export const fetchTasksApi = () => axios.get('api/tasks');
+export const fetchTaskApi = action => axios.get(`/api/tasks/${action.payload.id}`);
 
-export const fetchTaskApi = action => axios.get(`${API_URL}/tasks/${action.payload.id}`);
+export const addTaskApi = action => axios.post('/api/tasks', action.payload.task);
 
-export const addTaskApi = action => axios.post(`${API_URL}/tasks`, action.payload.task);
+export const removeTaskApi = action => axios.delete(`/api/tasks/${action.payload.id}`);
 
-export const removeTaskApi = action => axios.delete(`${API_URL}/tasks/${action.payload.id}`);
-
-export const onCheckTaskApi = action => axios.put(`${API_URL}/tasks/${action.payload.id}`, { status: action.payload.status });
+export const onCheckTaskApi = action => axios.put(`/api/tasks/${action.payload.id}`, { status: action.payload.status });
 
 export const signUpUserApi = action => {
   const {
@@ -20,7 +18,7 @@ export const signUpUserApi = action => {
     password
   } = action.payload.user;
 
-  return axios.post('api/auth/signup', {
+  return axios.post('/api/auth/signup', {
     firstName, lastName, email, password
   });
 };
@@ -28,17 +26,17 @@ export const signUpUserApi = action => {
 export const logInUserApi = action => {
   const { email, password } = action.payload.date;
 
-  return axios.post('api/auth/login', { email, password });
+  return axios.post('/api/auth/login', { email, password });
 };
 
 export const foundEmailApi = action => {
   const { email } = action.payload;
 
-  return axios.post(`${API_URL}/auth/forgot-password`, { email });
+  return axios.post('/api/auth/forgot-password', { email });
 };
 
 export const resetPasswordApi = action => {
   const { password, rePassword, token } = action.payload;
 
-  return axios.post(`${API_URL}/auth/reset-password`, { password, rePassword, token });
+  return axios.post('/api/auth/reset-password', { password, rePassword, token });
 };

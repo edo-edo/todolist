@@ -1,3 +1,5 @@
+require('dotenv').config();
+
 const express = require('express');
 const mongoose = require('mongoose');
 const bodyParser = require('body-parser');
@@ -5,18 +7,9 @@ const passport = require('passport');
 const signale = require('signale');
 const path = require('path');
 
-require('dotenv').config();
-
-const taskRouter = require('./tasks');
-const authRouter = require('./auth');
+const apiRouter = require('./routers');
 
 const app = express();
-
-app.use(express.static(`${__dirname}/../dist/index.html`));
-
-app.get('*', (req, res) => {
-  res.sendFile(path.resolve(`${__dirname}/../dist/index.html`));
-});
 
 app.use(bodyParser.json());
 app.use(
@@ -26,8 +19,13 @@ app.use(
 );
 app.use(passport.initialize());
 
-app.use('api/tasks', taskRouter);
-app.use('api/auth', authRouter);
+app.use('/api', apiRouter);
+
+app.use(express.static(`${__dirname}/../dist/`));
+
+app.get('*', (req, res) => {
+  res.sendFile(path.resolve(`${__dirname}/../dist/index.html`));
+});
 
 app.listen(process.env.PORT, () => signale.success(`server started ${process.env.PORT}`));
 

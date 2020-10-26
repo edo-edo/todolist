@@ -1,27 +1,30 @@
 const path = require('path');
+const webpack = require("webpack")
 const htmlWebpackPlugin = require('html-webpack-plugin');
 const miniCssExtractPlugin = require('mini-css-extract-plugin');
 const dotenv = require('dotenv-webpack');
 
-const BUILD_DIR = path.resolve(__dirname, './dist/');
-const APP_DIR = path.resolve(__dirname, './client/index.js');
-
 module.exports = {
   entry: {
-    main: APP_DIR
+    main: ["@babel/polyfill", "./client/index.js"]
   },
-  output: {
-    filename: '[name].bundle.js',
-    path: BUILD_DIR
-  },
-    mode: 'development',
-    devServer: {
-    contentBase: './dist',
-    port: 3000,
-    hot: true,
-    historyApiFallback: true
+  node: {
+    fs: "empty"
   },
 
+  output: {
+    path: path.resolve(__dirname, './dist'),
+    filename: 'bundle.js',
+  },
+
+  devServer: {
+    contentBase: "./dist",
+    hot: true,
+    port: 8080,
+    host: "localhost",
+    inline: true,
+    historyApiFallback: true
+  },
 
 
   plugins: [
@@ -30,7 +33,8 @@ module.exports = {
       filename: "./index.html",
     }),
     new miniCssExtractPlugin(),
-    new dotenv()
+    new dotenv(),
+    
   ],
 
   module: {
@@ -59,6 +63,7 @@ module.exports = {
       {
         test: /\.(js|jsx)$/,
         exclude: /node_modules/,
+        include: path.resolve(__dirname, 'client'),
         use: {
           loader: "babel-loader"
         }
