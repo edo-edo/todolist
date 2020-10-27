@@ -5,9 +5,11 @@ const mongoose = require('mongoose');
 const bodyParser = require('body-parser');
 const passport = require('passport');
 const signale = require('signale');
-const path = require('path');
-
-const apiRouter = require('./routers');
+// const path = require('path');
+const webpack = require('webpack');
+const webpackDevMiddleware = require('webpack-dev-middleware');
+const webpackHotMiddleware = require('webpack-hot-middleware');
+const config = require('../webpack.config');
 
 const app = express();
 
@@ -18,14 +20,27 @@ app.use(
   })
 );
 app.use(passport.initialize());
+const apiRouter = require('./routers');
 
 app.use('/api', apiRouter);
 
-app.use(express.static(`${__dirname}/../dist/`));
+const compiler = webpack(config);
 
-app.get('*', (req, res) => {
-  res.sendFile(path.resolve(`${__dirname}/../dist/index.html`));
-});
+app.use(webpackDevMiddleware(
+  compiler,
+  config.devServer
+));
+app.use(webpackHotMiddleware(compiler));
+
+const staticMiddleware = express.static('dist');
+
+app.use(staticMiddleware);
+
+// app.use(express.static(`${__dirname}/../dist/`));
+
+// app.get('*', (req, res) => {
+//   res.sendFile(path.resolve(`${__dirname}/../dist/index.html`));
+// });
 
 app.listen(process.env.PORT, () => signale.success(`server started ${process.env.PORT}`));
 

@@ -8,26 +8,23 @@ module.exports = {
   entry: {
     main: ["@babel/polyfill", "./client/index.js"]
   },
-  node: {
-    fs: "empty"
-  },
-
   output: {
     path: path.resolve(__dirname, './dist'),
     filename: 'bundle.js',
   },
 
   devServer: {
-    contentBase: "./dist",
+    contentBase: 'dist',
+    overlay: true,
     hot: true,
-    port: 8080,
-    host: "localhost",
-    inline: true,
-    historyApiFallback: true
+    stats: {
+      colors: true
+    }
   },
 
 
   plugins: [
+    new webpack.HotModuleReplacementPlugin(),
     new htmlWebpackPlugin({
       template: "./client/index.html",
       filename: "./index.html",

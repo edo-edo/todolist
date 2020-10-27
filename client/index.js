@@ -20,7 +20,7 @@ const store = createStore(rootReducer, applyMiddleware(sagaMiddleware));
 
 sagaMiddleware.run(rootSaga);
 
-ReactDOM.hydrate(
+ReactDOM.render(
   <Provider store={store}>
     <BrowserRouter>
       <App />
