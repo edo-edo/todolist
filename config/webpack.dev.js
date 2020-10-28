@@ -6,13 +6,17 @@ const dotenv = require('dotenv-webpack');
 
 module.exports = {
   entry: {
-    main: ["@babel/polyfill", "./client/index.js"]
+    app : [
+      './client/index.js',
+      'webpack-hot-middleware/client?reload=true',
+    ]
   },
   output: {
-    path: path.resolve(__dirname, './dist'),
-    filename: 'bundle.js',
+    filename: '[name].bundle.js',
+    path: path.resolve(__dirname, 'dist'),
+    publicPath: '/'
   },
-
+  mode: 'development',
   devServer: {
     contentBase: 'dist',
     overlay: true,
@@ -26,8 +30,8 @@ module.exports = {
   plugins: [
     new webpack.HotModuleReplacementPlugin(),
     new htmlWebpackPlugin({
-      template: "./client/index.html",
-      filename: "./index.html",
+      template: './client/index.html',
+      filename: 'index.html',
     }),
     new miniCssExtractPlugin(),
     new dotenv(),
@@ -53,16 +57,20 @@ module.exports = {
       {
         test: /\.(png|svg|jpg|gif)$/,
         use: [
-          'file-loader',
+          {
+            loader: "file-loader",
+            options: {
+                name: "images/[name]-[hash:8].[ext]"
+              }
+          }
         ],
       },
 
       {
         test: /\.(js|jsx)$/,
-        exclude: /node_modules/,
-        include: path.resolve(__dirname, 'client'),
+        exclude: /(node_modules|bower_components)/,
         use: {
-          loader: "babel-loader"
+          loader: "babel-loader",
         }
       },
 

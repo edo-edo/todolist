@@ -9,7 +9,7 @@ const signale = require('signale');
 const webpack = require('webpack');
 const webpackDevMiddleware = require('webpack-dev-middleware');
 const webpackHotMiddleware = require('webpack-hot-middleware');
-const config = require('../webpack.config');
+const config = require('../config/webpack.dev');
 
 const app = express();
 
