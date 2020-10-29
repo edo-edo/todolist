@@ -119,11 +119,11 @@ const LogIn = ({
           </Grid>
 
           <Grid item xs={3}>
-            <GoogleButton link={`${process.env.API_URL}/auth/login/google`} />
+            <GoogleButton link="/api/auth/login/google" />
           </Grid>
 
           <Grid item xs={3}>
-            <FacebookButton link={`${process.env.API_URL}/auth/login/facebook`} />
+            <FacebookButton link="/api/auth/login/facebook" />
           </Grid>
 
           <Grid item xs={12} className={classes.SignUpCustom}>

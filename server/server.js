@@ -5,10 +5,11 @@ const mongoose = require('mongoose');
 const bodyParser = require('body-parser');
 const passport = require('passport');
 const signale = require('signale');
-// const path = require('path');
+const path = require('path');
 const webpack = require('webpack');
 const webpackDevMiddleware = require('webpack-dev-middleware');
 const webpackHotMiddleware = require('webpack-hot-middleware');
+
 const config = require('../config/webpack.dev');
 
 const app = express();
@@ -30,20 +31,25 @@ app.use(webpackDevMiddleware(
   compiler,
   config.devServer
 ));
-app.use(webpackHotMiddleware(compiler, {
-  path: '/__webpack_hmr',
-  heartbeat: 2000
-}));
+app.use(webpackHotMiddleware(compiler));
 
 const staticMiddleware = express.static('dist');
 
 app.use(staticMiddleware);
 
-// app.use(express.static(`${__dirname}/../dist/`));
+app.use('*', (req, res, next) => {
+  const filename = path.join(compiler.outputPath, 'index.html');
 
-// app.get('*', (req, res) => {
-//   res.sendFile(path.resolve(`${__dirname}/../dist/index.html`));
-// });
+  compiler.outputFileSystem.readFile(filename, (err, result) => {
+    if (err) {
+      return next(err);
+    }
+    res.set('content-type', 'text/html');
+    res.send(result);
+
+    return res.end();
+  });
+});
 
 app.listen(process.env.PORT, () => signale.success(`server started ${process.env.PORT}`));
 

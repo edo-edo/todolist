@@ -91,7 +91,7 @@ passport.use(
   new GoogleStrategy({
     clientID: process.env.GOOGLE_CLIENT_ID,
     clientSecret: process.env.GOOGLE_CLIENT_SECRET,
-    callbackURL: '/auth/signup/google/callback'
+    callbackURL: '/api/auth/signup/google/callback'
   }, (async (accessToken, refreshToken, profile, done) => {
     try {
       const email = profile.emails[0].value;
@@ -130,7 +130,7 @@ passport.use(
   new GoogleStrategy({
     clientID: process.env.GOOGLE_CLIENT_ID,
     clientSecret: process.env.GOOGLE_CLIENT_SECRET,
-    callbackURL: '/auth/login/google/callback'
+    callbackURL: '/api/auth/login/google/callback'
   }, (async (accessToken, refreshToken, profile, done) => {
     try {
       const email = profile.emails[0].value;
@@ -153,7 +153,7 @@ passport.use(
   new FacebookStrategy({
     clientID: process.env.FACABOOK_APP_ID,
     clientSecret: process.env.FACABOOK_APP_SECRET,
-    callbackURL: '/auth/signup/facebook/callback',
+    callbackURL: '/api/auth/signup/facebook/callback',
     profileFields: ['displayName', 'name', 'emails']
   }, (async (accessToken, refreshToken, profile, done) => {
     try {
@@ -197,7 +197,7 @@ passport.use(
   new FacebookStrategy({
     clientID: process.env.FACABOOK_APP_ID,
     clientSecret: process.env.FACABOOK_APP_SECRET,
-    callbackURL: '/auth/login/facebook/callback',
+    callbackURL: '/api/auth/login/facebook/callback',
     profileFields: ['displayName', 'name', 'emails']
   }, (async (accessToken, refreshToken, profile, done) => {
     try {

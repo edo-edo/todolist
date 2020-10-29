@@ -151,11 +151,11 @@ const SigningUp = ({
           </Grid>
 
           <Grid item xs={3}>
-            <GoogleButton link={`${process.env.API_URL}/auth/signup/google`} />
+            <GoogleButton link="/api/auth/signup/google" />
           </Grid>
 
           <Grid item xs={3}>
-            <FacebookButton link={`${process.env.API_URL}/auth/signup/facebook`} />
+            <FacebookButton link="/api/auth/signup/facebook" />
           </Grid>
           <Grid item xs={12} className={classes.LogIn}>
 

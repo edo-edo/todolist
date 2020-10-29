@@ -10,10 +10,7 @@ const sendMail = require('./auth.service');
 
 const sendResponseOAuth2 = async (req, res, next, err, user, info, errType) => {
   if (!user || err) {
-    res.writeHead(302, {
-      location: `${process.env.WEBSITE_URL}?${errType}=${info.message}`
-    });
-    return res.end();
+    return res.redirect(`/?${errType}=${info.message}`);
   }
 
   req.login(user, { session: false }, async error => {
@@ -24,10 +21,7 @@ const sendResponseOAuth2 = async (req, res, next, err, user, info, errType) => {
     const body = { _id: user._id, firstName: user.firstName };
     const token = jwt.sign({ user: body }, process.env.JWT_KEY);
 
-    res.writeHead(302, {
-      location: `${process.env.WEBSITE_URL}?token=${token}`
-    });
-    return res.end();
+    return res.redirect(`/?token=${token}`);
   });
   return false;
 };
