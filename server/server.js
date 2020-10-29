@@ -30,7 +30,10 @@ app.use(webpackDevMiddleware(
   compiler,
   config.devServer
 ));
-app.use(webpackHotMiddleware(compiler));
+app.use(webpackHotMiddleware(compiler, {
+  path: '/__webpack_hmr',
+  heartbeat: 2000
+}));
 
 const staticMiddleware = express.static('dist');
 
