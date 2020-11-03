@@ -2,7 +2,7 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import { Avatar, Chip } from '@material-ui/core/';
 
-import FacebookIcon from '../../../assets/icons/facebook.png';
+import FacebookIcon from '../../../assets/icons/facebook.jpg';
 
 const FacebookButton = ({ link }) => (
   <Chip
