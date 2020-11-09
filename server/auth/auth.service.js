@@ -26,13 +26,13 @@ passport.use(
             return done(null, false, { message: `${email} already exists ` });
           }
 
-          const newUser = await User.create({
+          const newUser = await User({
             firstName,
             lastName,
             email,
             password,
             provider: 'website'
-          });
+          }).save();
           return done(null, newUser, { message: 'User is added successfully' });
         });
         return false;
@@ -104,7 +104,6 @@ passport.use(
         email,
         provider: 'google'
       }, { abortEarly: false });
-
       const user = await User.findOne({ email });
 
       if (user) {
@@ -120,7 +119,7 @@ passport.use(
 
       return done(null, newUser);
     } catch (err) {
-      return done(err);
+      return done(err, { message: 'something went wrong ' });
     }
   }))
 );
