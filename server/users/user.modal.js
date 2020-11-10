@@ -26,9 +26,14 @@ async function preSave(next) {
   next();
 }
 
-async function comparePass(password) {
-  const compare = await bcrypt.compare(password, this.password);
-  return compare;
+async function comparePass(password, callback) {
+  bcrypt.compare(password, this.password, (err, isMatch) => {
+    if (err) {
+      return callback(err);
+    }
+
+    return callback(null, isMatch);
+  });
 }
 
 userSchema.methods.isValidPassword = comparePass;
