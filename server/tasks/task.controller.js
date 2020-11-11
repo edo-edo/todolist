@@ -90,11 +90,11 @@ const updateTask = async (req, res) => {
       return res.json({ message: 'status updated' });
     }
 
-    return res.status(403).send('failed to update status');
+    return res.status(403).send('Failed to update status');
   } catch (err) {
     signale.fatal('Fatal: failed to update status', err);
 
-    return res.status(500).send('failed to update status');
+    return res.status(500).send('Failed to update status');
   }
 };
 
