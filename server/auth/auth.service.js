@@ -19,7 +19,7 @@ passport.use(
     async (req, email, password, done) => {
       const { firstName, lastName } = req.body;
       try {
-        await userValidation.validateAsync(req.body, { abortEarly: false });
+        await userValidation.validateAsync(req.body);
 
         await User.findOne({ email }).then(async user => {
           if (user) {
@@ -62,13 +62,16 @@ passport.use(
           return done(null, false, { message: 'User not found' });
         }
 
-        const validate = await user.isValidPassword(password);
-
-        if (!validate) {
-          return done(null, false, { message: 'Wrong Password' });
-        }
-
-        return done(null, user, { message: 'Logged in Successfully' });
+        await user.isValidPassword(password, (error, isMatch) => {
+          if (error) {
+            return done(null, false);
+          }
+          if (!isMatch) {
+            return done(null, false, { message: 'Wrong Password' });
+          }
+          return done(null, user, { message: 'Logged in Successfully' });
+        });
+        return false;
       } catch (error) {
         return done(error);
       }
@@ -103,7 +106,7 @@ passport.use(
         lastName,
         email,
         provider: 'google'
-      }, { abortEarly: false });
+      });
       const user = await User.findOne({ email });
 
       if (user) {
@@ -169,7 +172,7 @@ passport.use(
         lastName,
         email,
         provider: 'facebook'
-      }, { abortEarly: false });
+      });
 
       const user = await User.findOne({ email });
 

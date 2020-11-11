@@ -22,7 +22,7 @@ const createTask = async (req, res) => {
     const { _id } = req.user;
     const { title, body, status } = req.body;
 
-    await taskValidation.validateAsync(req.body, { abortEarly: false });
+    await taskValidation.validateAsync(req.body);
 
     const task = await Task.create({
       user: _id,

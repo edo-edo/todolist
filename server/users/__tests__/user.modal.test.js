@@ -3,6 +3,10 @@ const bcrypt = require('bcryptjs');
 const User = require('../user.modal');
 
 const password = 'passwrod';
+const correctComparePassword = 'passwrod';
+const incorrectComparePassword = 'NoNo';
+const salt = 'salt';
+const hash = 'hash';
 
 describe('User modal testing', () => {
   test('test modal create _id ', () => {
@@ -12,9 +16,6 @@ describe('User modal testing', () => {
   });
 
   test('test modal password hashing ', () => {
-    const salt = 'salt';
-    const hash = 'hash';
-
     const user = new User({
       password
     });
@@ -29,9 +30,6 @@ describe('User modal testing', () => {
     expect(user.password).toBe(hash);
   });
   test('test password compare', () => {
-    const correctComparePassword = 'passwrod';
-    const incorrectComparePassword = 'NoNo';
-
     const user = new User({
       password
     });
@@ -45,5 +43,20 @@ describe('User modal testing', () => {
 
     expect(passwordMock.mock.calls[0][1]).toBe(true);
     expect(passwordMock.mock.calls[1][1]).toBe(false);
+  });
+
+  test('test compare password error', () => {
+    const user = new User({
+      password
+    });
+
+    const passwordMock = jest.fn();
+
+    bcrypt.compare = jest.fn((newPassword, oldPassword, callback) => callback(new Error()));
+
+    user.isValidPassword(correctComparePassword, passwordMock);
+
+    expect(passwordMock.mock.calls.length).toBe(1);
+    expect(passwordMock.mock.calls[0][0]).toBeInstanceOf(Error);
   });
 });
