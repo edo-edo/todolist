@@ -10,8 +10,9 @@
     "build": "webpack --mode production",
     "dev": "nodemon --watch config --watch server server/server.js",
     "lint": "eslint .",
-    "test": "jest"
+    "test": "jest --env node"
   },
+  "testEnvironment": "node",
   "jest": {
     "collectCoverage": true
   },
