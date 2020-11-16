@@ -7,7 +7,6 @@ const taskValidation = require('./task.validation');
 const getTasks = async (req, res) => {
   try {
     const { _id } = req.user;
-
     const tasks = await Task.find({ user: _id }, { body: 0, __v: 0 });
     return res.json({ tasks });
   } catch (err) {

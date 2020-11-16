@@ -65,4 +65,4 @@ mongoose.connect(process.env.MONGO_DB_URL, ({
   .then(() => signale.success('mongoDB connected'))
   .catch(err => signale.error(err));
 
-module.export = app;
+module.exports = app;

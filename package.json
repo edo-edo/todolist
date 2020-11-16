@@ -4,6 +4,7 @@
   "description": "",
   "private": "true",
   "main": "server.js",
+  "testEnvironment": "node",
   "scripts": {
     "start": "webpack-dev-server --mode production --hot",
     "back": "nodemon ./server/server.js",
@@ -12,7 +13,7 @@
     "lint": "eslint .",
     "test": "jest --env node"
   },
-  "testEnvironment": "node",
+  
   "jest": {
     "collectCoverage": true
   },
