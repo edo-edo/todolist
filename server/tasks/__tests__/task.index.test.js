@@ -24,8 +24,8 @@ describe('task Api test', () => {
     time();
   });
 
-  describe('test  tasks', () => {
-    test('test get tasks', async () => {
+  describe('test  tasks Api ', () => {
+    test('get tasks successfully testing ', async () => {
       Task.find = await jest.fn().mockReturnValue([]);
 
       const response = await request(app)
@@ -35,7 +35,7 @@ describe('task Api test', () => {
       expect(response.statusCode).toBe(200);
     });
 
-    test('test get tasks error', async () => {
+    test('get tasks error testing', async () => {
       Task.find = await jest.fn().mockRejectedValue(new Error());
 
       const response = await request(app)
@@ -44,10 +44,20 @@ describe('task Api test', () => {
 
       expect(response.statusCode).toBe(500);
     });
+
+    test('returned an error (401) unauthorized ', async () => {
+      Task.find = await jest.fn().mockReturnValue([]);
+
+      const response = await request(app)
+        .get('/api/tasks')
+        .set('Authorization', 'tesToken');
+
+      expect(response.statusCode).toBe(401);
+    });
   });
 
-  describe('create task api', () => {
-    test('create task', async () => {
+  describe('create task Api', () => {
+    test('create task successfully testing', async () => {
       taskValidation.validateAsync = jest.fn().mockReturnValue(task);
 
       Task.create = await jest.fn().mockReturnValue(task);
@@ -61,7 +71,7 @@ describe('task Api test', () => {
       expect(response.body.id).toEqual(task._id);
     });
 
-    test('create task error', async () => {
+    test('create task error testing', async () => {
       taskValidation.validateAsync = jest.fn().mockReturnValue(task);
 
       Task.create = await jest.fn().mockRejectedValue(new Error());
@@ -75,8 +85,8 @@ describe('task Api test', () => {
     });
   });
 
-  describe('get task api', () => {
-    test('get task successfully test', async () => {
+  describe('get task Api', () => {
+    test('get task successfully testing', async () => {
       Task.findOne = await jest.fn().mockReturnValue(task);
 
       const response = await request(app)
@@ -87,7 +97,7 @@ describe('task Api test', () => {
       expect(response.body.task).toEqual(task);
     });
 
-    test('get task forbiden  error test', async () => {
+    test('get task forbiden  testing', async () => {
       Task.findOne = await jest.fn().mockReturnValue(null);
 
       const response = await request(app)
@@ -97,7 +107,7 @@ describe('task Api test', () => {
       expect(response.statusCode).toBe(403);
       expect(response.text).toBe('failed to get task');
     });
-    test('get  task error test', async () => {
+    test('get task error testing', async () => {
       Task.findOne = await jest.fn().mockRejectedValue(new Error());
 
       const response = await request(app)
@@ -108,8 +118,8 @@ describe('task Api test', () => {
     });
   });
 
-  describe('update task api', () => {
-    test('update  task', async () => {
+  describe('update task Api', () => {
+    test('update  task successfully testing', async () => {
       Task.updateOne = await jest.fn().mockReturnValue({ nModified: 1 });
 
       const response = await request(app)
@@ -120,10 +130,33 @@ describe('task Api test', () => {
       expect(response.statusCode).toBe(200);
       expect(response.body.message).toEqual('status updated');
     });
+
+    test('update  task forbiden  testing', async () => {
+      Task.updateOne = await jest.fn().mockReturnValue({ nModified: 0 });
+
+      const response = await request(app)
+        .put(`/api/tasks/${task._id}`)
+        .set('Authorization', process.env.TEST_TOKEN)
+        .send({ status: task.status });
+
+      expect(response.statusCode).toBe(403);
+      expect(response.text).toEqual('Failed to update status');
+    });
+
+    test('update task error testing', async () => {
+      Task.updateOne = await jest.fn().mockRejectedValue(new Error());
+
+      const response = await request(app)
+        .put(`/api/tasks/${task._id}`)
+        .set('Authorization', process.env.TEST_TOKEN)
+        .send({ status: task.status });
+
+      expect(response.statusCode).toBe(500);
+    });
   });
 
-  describe('remove task api test', () => {
-    test('remove  task', async () => {
+  describe('remove task Api test', () => {
+    test('remove  task successfully testing', async () => {
       Task.deleteOne = await jest.fn().mockReturnValue({ deletedCount: 1 });
 
       const response = await request(app)
@@ -132,6 +165,27 @@ describe('task Api test', () => {
 
       expect(response.statusCode).toBe(200);
       expect(response.body.message).toEqual('task deleted');
+    });
+
+    test('remove  task forbiden testing', async () => {
+      Task.deleteOne = await jest.fn().mockReturnValue({ deletedCount: 0 });
+
+      const response = await request(app)
+        .delete(`/api/tasks/${task._id}`)
+        .set('Authorization', process.env.TEST_TOKEN);
+
+      expect(response.statusCode).toBe(403);
+      expect(response.text).toBe('failed to delete task');
+    });
+
+    test('remove  task error testing', async () => {
+      Task.deleteOne = await jest.fn().mockRejectedValue(new Error());
+
+      const response = await request(app)
+        .delete(`/api/tasks/${task._id}`)
+        .set('Authorization', process.env.TEST_TOKEN);
+
+      expect(response.statusCode).toBe(500);
     });
   });
 
