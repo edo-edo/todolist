@@ -4,7 +4,6 @@
   "description": "",
   "private": "true",
   "main": "server.js",
-  "testEnvironment": "node",
   "scripts": {
     "start": "webpack-dev-server --mode production --hot",
     "back": "nodemon ./server/server.js",
@@ -15,7 +14,11 @@
   },
   
   "jest": {
-    "collectCoverage": true
+    "testEnvironment": "node",
+    "collectCoverage": true,
+    "coveragePathIgnorePatterns": [
+      "/node_modules/"
+    ]
   },
   "author": "",
   "license": "ISC",
