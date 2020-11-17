@@ -27,7 +27,11 @@ const sendResponseOAuth2 = async (req, res, next, err, user, info, errType) => {
 };
 
 const sendResponseLocalStrategy = async (req, res, next, err, user, info) => {
-  if (!user || err) {
+  if (err) {
+    return res.status(400).send('Something went wrong');
+  }
+
+  if (!user) {
     return res.status(400).send(info.message);
   }
 

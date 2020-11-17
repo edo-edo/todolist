@@ -40,7 +40,7 @@ passport.use(
 
         return done(null, newUser, { message: 'User is added successfully' });
       } catch (err) {
-        return done(null, false, { message: 'Something went wrong' });
+        return done(err);
       }
     }
   )
@@ -61,11 +61,7 @@ passport.use(
         if (!user) {
           return done(null, false, { message: 'User not found' });
         }
-
         await user.isValidPassword(password, (error, isMatch) => {
-          if (error) {
-            return done(null, false);
-          }
           if (!isMatch) {
             return done(null, false, { message: 'Wrong Password' });
           }
