@@ -8,18 +8,16 @@
     "start": "webpack-dev-server --mode production --hot",
     "back": "nodemon ./server/server.js",
     "build": "webpack --mode production",
-    "dev": "nodemon --watch config --watch server server/server.js",
+    "dev": "nodemon --watch config --watch server server/index.js",
     "lint": "eslint .",
-    "test": "jest --env node"
+    "test": "jest --env node --watch"
   },
   
   "jest": {
     "testEnvironment": "node",
-    "collectCoverage": true,
-    "coveragePathIgnorePatterns": [
-      "/node_modules/"
-    ]
+    "collectCoverage": true
   },
+  
   "author": "",
   "license": "ISC",
   "devDependencies": {

@@ -19,28 +19,28 @@ passport.use(
     async (req, email, password, done) => {
       const { firstName, lastName } = req.body;
       try {
-        await userValidation.validateAsync(req.body);
-
-        await User.findOne({ email }).then(async user => {
-          if (user) {
-            return done(null, false, { message: `${email} already exists ` });
-          }
-
-          const newUser = await User({
-            firstName,
-            lastName,
-            email,
-            password,
-            provider: 'website'
-          }).save();
-          return done(null, newUser, { message: 'User is added successfully' });
-        });
-        return false;
-      } catch (err) {
-        if (err.isJoi) {
-          return done(null, false, { message: err.details[0].message });
+        const { error } = await userValidation.validate(req.body);
+        if (error) {
+          return done(null, false, { message: error.details[0].message });
         }
-        return done(err);
+
+        const user = await User.findOne({ email });
+
+        if (user) {
+          return done(null, false, { message: `${email} already exists` });
+        }
+
+        const newUser = await User({
+          firstName,
+          lastName,
+          email,
+          password,
+          provider: 'website'
+        }).save();
+
+        return done(null, newUser, { message: 'User is added successfully' });
+      } catch (err) {
+        return done(null, false, { message: 'Something went wrong' });
       }
     }
   )

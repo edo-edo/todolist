@@ -1,10 +1,9 @@
 const request = require('supertest');
 const siganl = require('signale');
-const mongoose = require('mongoose');
 
 siganl.disable();
 
-const app = require('../../server');
+const app = require('../../app');
 const Task = require('../task.modal');
 const taskValidation = require('../task.validation');
 
@@ -15,18 +14,14 @@ const task = {
   status: true
 };
 
-const time = () => {
-  jest.useFakeTimers(10000);
-};
-
 describe('task Api test', () => {
-  beforeEach(() => {
-    time();
+  afterEach(() => {
+    jest.useFakeTimers();
   });
 
   describe('test  tasks Api ', () => {
     test('get tasks successfully testing ', async () => {
-      Task.find = await jest.fn().mockReturnValue([]);
+      Task.find = jest.fn().mockReturnValue([]);
 
       const response = await request(app)
         .get('/api/tasks')
@@ -36,7 +31,7 @@ describe('task Api test', () => {
     });
 
     test('get tasks error testing', async () => {
-      Task.find = await jest.fn().mockRejectedValue(new Error());
+      Task.find = jest.fn().mockRejectedValue(new Error());
 
       const response = await request(app)
         .get('/api/tasks')
@@ -44,23 +39,13 @@ describe('task Api test', () => {
 
       expect(response.statusCode).toBe(500);
     });
-
-    test('returned an error (401) unauthorized ', async () => {
-      Task.find = await jest.fn().mockReturnValue([]);
-
-      const response = await request(app)
-        .get('/api/tasks')
-        .set('Authorization', 'tesToken');
-
-      expect(response.statusCode).toBe(401);
-    });
   });
 
   describe('create task Api', () => {
     test('create task successfully testing', async () => {
       taskValidation.validateAsync = jest.fn().mockReturnValue(task);
 
-      Task.create = await jest.fn().mockReturnValue(task);
+      Task.create = jest.fn().mockReturnValue(task);
 
       const response = await request(app)
         .post('/api/tasks')
@@ -74,7 +59,7 @@ describe('task Api test', () => {
     test('create task error testing', async () => {
       taskValidation.validateAsync = jest.fn().mockReturnValue(task);
 
-      Task.create = await jest.fn().mockRejectedValue(new Error());
+      Task.create = jest.fn().mockRejectedValue(new Error());
 
       const response = await request(app)
         .post('/api/tasks')
@@ -87,7 +72,7 @@ describe('task Api test', () => {
 
   describe('get task Api', () => {
     test('get task successfully testing', async () => {
-      Task.findOne = await jest.fn().mockReturnValue(task);
+      Task.findOne = jest.fn().mockReturnValue(task);
 
       const response = await request(app)
         .get(`/api/tasks/${task._id}`)
@@ -98,7 +83,7 @@ describe('task Api test', () => {
     });
 
     test('get task forbiden  testing', async () => {
-      Task.findOne = await jest.fn().mockReturnValue(null);
+      Task.findOne = jest.fn().mockReturnValue(null);
 
       const response = await request(app)
         .get(`/api/tasks/${task._id}`)
@@ -108,7 +93,7 @@ describe('task Api test', () => {
       expect(response.text).toBe('failed to get task');
     });
     test('get task error testing', async () => {
-      Task.findOne = await jest.fn().mockRejectedValue(new Error());
+      Task.findOne = jest.fn().mockRejectedValue(new Error());
 
       const response = await request(app)
         .get(`/api/tasks/${task._id}`)
@@ -120,7 +105,7 @@ describe('task Api test', () => {
 
   describe('update task Api', () => {
     test('update  task successfully testing', async () => {
-      Task.updateOne = await jest.fn().mockReturnValue({ nModified: 1 });
+      Task.updateOne = jest.fn().mockReturnValue({ nModified: 1 });
 
       const response = await request(app)
         .put(`/api/tasks/${task._id}`)
@@ -132,7 +117,7 @@ describe('task Api test', () => {
     });
 
     test('update  task forbiden  testing', async () => {
-      Task.updateOne = await jest.fn().mockReturnValue({ nModified: 0 });
+      Task.updateOne = jest.fn().mockReturnValue({ nModified: 0 });
 
       const response = await request(app)
         .put(`/api/tasks/${task._id}`)
@@ -144,7 +129,7 @@ describe('task Api test', () => {
     });
 
     test('update task error testing', async () => {
-      Task.updateOne = await jest.fn().mockRejectedValue(new Error());
+      Task.updateOne = jest.fn().mockRejectedValue(new Error());
 
       const response = await request(app)
         .put(`/api/tasks/${task._id}`)
@@ -157,7 +142,7 @@ describe('task Api test', () => {
 
   describe('remove task Api test', () => {
     test('remove  task successfully testing', async () => {
-      Task.deleteOne = await jest.fn().mockReturnValue({ deletedCount: 1 });
+      Task.deleteOne = jest.fn().mockReturnValue({ deletedCount: 1 });
 
       const response = await request(app)
         .delete(`/api/tasks/${task._id}`)
@@ -168,7 +153,7 @@ describe('task Api test', () => {
     });
 
     test('remove  task forbiden testing', async () => {
-      Task.deleteOne = await jest.fn().mockReturnValue({ deletedCount: 0 });
+      Task.deleteOne = jest.fn().mockReturnValue({ deletedCount: 0 });
 
       const response = await request(app)
         .delete(`/api/tasks/${task._id}`)
@@ -179,7 +164,7 @@ describe('task Api test', () => {
     });
 
     test('remove  task error testing', async () => {
-      Task.deleteOne = await jest.fn().mockRejectedValue(new Error());
+      Task.deleteOne = jest.fn().mockRejectedValue(new Error());
 
       const response = await request(app)
         .delete(`/api/tasks/${task._id}`)
@@ -187,10 +172,5 @@ describe('task Api test', () => {
 
       expect(response.statusCode).toBe(500);
     });
-  });
-
-  afterAll(async done => {
-    await mongoose.connection.close();
-    done();
   });
 });
