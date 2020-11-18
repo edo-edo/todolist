@@ -146,4 +146,103 @@ describe('auth Api testing', () => {
       expect(response.text).toBe('User not found');
     });
   });
+
+  describe('Reset password Api testing', () => {
+    test('reset password successfully testing', async () => {
+      const strongPassword = 'Password143';
+      User.updateOne = jest.fn().mockReturnValue({ nModified: 1 });
+      User.findOne = jest.fn().mockReturnValue(user);
+
+      const response = await request(app)
+        .post('/api/auth/reset-password')
+        .set('Authorization', 'application/json')
+        .send({
+          password: strongPassword,
+          rePassword: strongPassword,
+          token: process.env.TEST_TOKEN
+        });
+
+      expect(response.statusCode).toBe(200);
+      expect(response.body.token).toBe('Bearer test_token');
+    });
+    test('reset Api  Passwords must match testing', async () => {
+      const strongPassword = 'Password143';
+
+      const response = await request(app)
+        .post('/api/auth/reset-password')
+        .set('Authorization', 'application/json')
+        .send({
+          password: strongPassword,
+          rePassword: password,
+          token: process.env.TEST_TOKEN
+        });
+
+      expect(response.statusCode).toBe(400);
+      expect(response.text).toBe('Passwords must match');
+    });
+    test('reset password  Invalid token testing', async () => {
+      const strongPassword = 'Password143';
+
+      const response = await request(app)
+        .post('/api/auth/reset-password')
+        .set('Authorization', 'application/json')
+        .send({
+          password: strongPassword,
+          rePassword: strongPassword,
+          token: '123ees'
+        });
+
+      expect(response.statusCode).toBe(400);
+      expect(response.text).toBe('Invalid token');
+    });
+
+    test('reset password  valid password testing', async () => {
+      const weakPassword = '12';
+      const response = await request(app)
+        .post('/api/auth/reset-password')
+        .set('Authorization', 'application/json')
+        .send({
+          password: weakPassword,
+          rePassword: weakPassword,
+          token: process.env.TEST_TOKEN
+        });
+
+      expect(response.statusCode).toBe(400);
+      expect(response.text).toBe('"value" length must be at least 6 characters long');
+    });
+
+    test('reset password forbiden testing', async () => {
+      const strongPassword = 'Password143';
+      User.updateOne = jest.fn().mockReturnValue({ nModified: 0 });
+
+      const response = await request(app)
+        .post('/api/auth/reset-password')
+        .set('Authorization', 'application/json')
+        .send({
+          password: strongPassword,
+          rePassword: strongPassword,
+          token: process.env.TEST_TOKEN
+        });
+
+      expect(response.statusCode).toBe(400);
+      expect(response.text).toBe('failed to update password');
+    });
+
+    test('reset password Error testing', async () => {
+      const strongPassword = 'Password143';
+      User.updateOne = jest.fn().mockRejectedValue(new Error());
+
+      const response = await request(app)
+        .post('/api/auth/reset-password')
+        .set('Authorization', 'application/json')
+        .send({
+          password: strongPassword,
+          rePassword: strongPassword,
+          token: process.env.TEST_TOKEN
+        });
+
+      expect(response.statusCode).toBe(400);
+      expect(response.text).toBe('failed to update password');
+    });
+  });
 });

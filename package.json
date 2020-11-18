@@ -10,12 +10,16 @@
     "build": "webpack --mode production",
     "dev": "nodemon --watch config --watch server server/index.js",
     "lint": "eslint .",
-    "test": "jest --env node --watch"
+    "test": "jest --env node --watch",
+    "coverage": "jest --coverage"
   },
   
   "jest": {
     "testEnvironment": "node",
-    "collectCoverage": true
+    "collectCoverage": true,
+  "coveragePathIgnorePatterns": [
+    "node_modules" 
+  ]
   },
   
   "author": "",

@@ -166,8 +166,13 @@ const resetPassword = async (req, res) => {
   if (password !== rePassword) {
     return res.status(400).send('Passwords must match');
   }
-  Joi.attempt(password, Joi.string().required().min(6).regex(RegExp('^[a-zA-Z0-9]'))
-    .message('You password is week'));
+
+  try {
+    Joi.attempt(password, Joi.string().min(6).regex(RegExp('^[a-zA-Z0-9]*$'))
+      .message('You password is week'));
+  } catch (error) {
+    return res.status(400).send(error.details[0].message);
+  }
 
   try {
     decoded = jwtDecode(token);
