@@ -118,6 +118,18 @@ describe('auth Api testing', () => {
       expect(response.statusCode).toBe(400);
       expect(response.text).toBe('User not found');
     });
+
+    test('Log In error testing', async () => {
+      User.findOne = jest.fn().mockRejectedValue(new Error());
+
+      const response = await request(app)
+        .post('/api/auth/login')
+        .set('Authorization', 'application/json')
+        .send({ email, password });
+
+      expect(response.statusCode).toBe(400);
+      expect(response.text).toBe('Something went wrong');
+    });
   });
 
   describe('Forgot password Api testing', () => {
@@ -132,6 +144,20 @@ describe('auth Api testing', () => {
         .send({ email });
       expect(response.statusCode).toBe(200);
       expect(response.body.message).toBe('send success');
+    });
+
+    test('forgot password  send Error testing', async () => {
+      nodemailer.createTransport = jest.fn().mockReturnValue(
+        { sendMail: jest.fn().mockRejectedValue(new Error()) }
+      );
+
+      const response = await request(app)
+        .post('/api/auth/forgot-password')
+        .set('Authorization', 'application/json')
+        .send({ email });
+
+      expect(response.statusCode).toBe(400);
+      expect(response.text).toBe('Somthing went wrong');
     });
 
     test('forgot password  User not found testing', async () => {

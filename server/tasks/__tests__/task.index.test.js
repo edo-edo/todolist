@@ -43,7 +43,7 @@ describe('task Api test', () => {
 
   describe('create task Api', () => {
     test('create task successfully testing', async () => {
-      taskValidation.validateAsync = jest.fn().mockReturnValue(task);
+      taskValidation.validate = jest.fn().mockReturnValue({ error: null });
 
       Task.create = jest.fn().mockReturnValue(task);
 
@@ -57,7 +57,7 @@ describe('task Api test', () => {
     });
 
     test('create task error testing', async () => {
-      taskValidation.validateAsync = jest.fn().mockReturnValue(task);
+      taskValidation.validate = jest.fn().mockReturnValue({ error: null });
 
       Task.create = jest.fn().mockRejectedValue(new Error());
 
@@ -67,6 +67,22 @@ describe('task Api test', () => {
         .send({ task });
 
       expect(response.statusCode).toBe(500);
+    });
+
+    test('create task valid error testing', async () => {
+      const details = [{ message: '"title" is required' }];
+
+      taskValidation.validate = jest.fn().mockReturnValue({ error: { details } });
+
+      Task.create = jest.fn().mockRejectedValue(new Error());
+
+      const response = await request(app)
+        .post('/api/tasks')
+        .set('Authorization', process.env.TEST_TOKEN)
+        .send({ ...task._id, ...task.body, ...task.status });
+
+      expect(response.statusCode).toBe(400);
+      expect(response.text).toBe('"title" is required');
     });
   });
 
@@ -114,6 +130,16 @@ describe('task Api test', () => {
 
       expect(response.statusCode).toBe(200);
       expect(response.body.message).toEqual('status updated');
+    });
+
+    test('update  task valid error testing', async () => {
+      const response = await request(app)
+        .put(`/api/tasks/${task._id}`)
+        .set('Authorization', process.env.TEST_TOKEN)
+        .send({ status: task.body });
+
+      expect(response.statusCode).toBe(400);
+      expect(response.text).toBe('"value" must be a boolean');
     });
 
     test('update  task forbiden  testing', async () => {
