@@ -3,7 +3,23 @@ const nodemailer = require('nodemailer');
 const User = require('../users/user.modal');
 const userValidation = require('../users/user.validation');
 
-const oAuth2Callback = async (accessToken, refreshToken, profile, done) => {
+const OAuth2LogInCallback = async (accessToken, refreshToken, profile, done) => {
+  try {
+    const email = profile.emails[0].value;
+
+    const user = await User.findOne({ email });
+
+    if (!user) {
+      return done(null, false, { message: 'User not found' });
+    }
+
+    return done(null, user);
+  } catch (err) {
+    return done(err, { message: 'something went wrong' });
+  }
+};
+
+const OAuth2SignUpCallback = async (accessToken, refreshToken, profile, done) => {
   try {
     const email = profile.emails[0].value;
     const firstName = profile.name.givenName;
@@ -66,5 +82,6 @@ const sendMail = async (user, token) => {
 
 module.exports = {
   sendMail,
-  oAuth2Callback
+  OAuth2SignUpCallback,
+  OAuth2LogInCallback
 };

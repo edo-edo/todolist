@@ -5,7 +5,7 @@ const FacebookStrategy = require('passport-facebook').Strategy;
 
 const User = require('../users/user.modal');
 const userValidation = require('../users/user.validation');
-const { oAuth2Callback } = require('./auth.service');
+const { OAuth2SignUpCallback, OAuth2LogInCallback } = require('./auth.service');
 
 passport.use(
   'signup',
@@ -91,7 +91,16 @@ passport.use(
     clientID: process.env.GOOGLE_CLIENT_ID,
     clientSecret: process.env.GOOGLE_CLIENT_SECRET,
     callbackURL: '/api/auth/signup/google/callback'
-  }, (oAuth2Callback))
+  }, (OAuth2SignUpCallback))
+);
+
+passport.use(
+  'googleLogin',
+  new GoogleStrategy({
+    clientID: process.env.GOOGLE_CLIENT_ID,
+    clientSecret: process.env.GOOGLE_CLIENT_SECRET,
+    callbackURL: '/api/auth/login/google/callback'
+  }, (OAuth2LogInCallback))
 );
 
 passport.use(
@@ -101,7 +110,7 @@ passport.use(
     clientSecret: process.env.FACABOOK_APP_SECRET,
     callbackURL: '/api/auth/signup/facebook/callback',
     profileFields: ['displayName', 'name', 'emails']
-  }, (oAuth2Callback))
+  }, (OAuth2SignUpCallback))
 );
 
 passport.use(
@@ -111,23 +120,5 @@ passport.use(
     clientSecret: process.env.FACABOOK_APP_SECRET,
     callbackURL: '/api/auth/login/facebook/callback',
     profileFields: ['displayName', 'name', 'emails']
-  }, (async (accessToken, refreshToken, profile, done) => {
-    try {
-      if (!profile.emails[0].value) {
-        return done(null, false, { message: 'You don\'t use email address on facebook ' });
-      }
-
-      const email = profile.emails[0].value;
-
-      const user = await User.findOne({ email });
-
-      if (!user) {
-        return done(null, false, { message: 'User not found ' });
-      }
-
-      return done(null, user);
-    } catch (err) {
-      return done(err);
-    }
-  }))
+  }, (OAuth2LogInCallback))
 );
