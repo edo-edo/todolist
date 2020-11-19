@@ -1,222 +1,43 @@
-const passport = require('passport');
-const LocalStrategy = require('passport-local').Strategy;
 const nodemailer = require('nodemailer');
-const GoogleStrategy = require('passport-google-oauth20').Strategy;
-const FacebookStrategy = require('passport-facebook').Strategy;
 
 const User = require('../users/user.modal');
 const userValidation = require('../users/user.validation');
 
-passport.use(
-  'signup',
-  new LocalStrategy(
-    {
-      usernameField: 'email',
-      passwordField: 'password',
-      passReqToCallback: true
+const oAuth2Callback = async (accessToken, refreshToken, profile, done) => {
+  try {
+    const email = profile.emails[0].value;
+    const firstName = profile.name.givenName;
+    const lastName = profile.name.familyName;
+    const { provider } = profile;
 
-    },
-    async (req, email, password, done) => {
-      const { firstName, lastName } = req.body;
-      try {
-        const { error } = await userValidation.validate(req.body);
-        if (error) {
-          return done(null, false, { message: error.details[0].message });
-        }
+    const { error } = await userValidation.validate({
+      firstName,
+      lastName,
+      email,
+      provider
+    });
 
-        const user = await User.findOne({ email });
-
-        if (user) {
-          return done(null, false, { message: `${email} already exists` });
-        }
-
-        const newUser = await User({
-          firstName,
-          lastName,
-          email,
-          password,
-          provider: 'website'
-        }).save();
-
-        return done(null, newUser, { message: 'User is added successfully' });
-      } catch (err) {
-        return done(err);
-      }
+    if (error) {
+      return done(null, false, { message: error.details[0].message });
     }
-  )
-);
 
-passport.use(
-  'login',
-  new LocalStrategy(
-    {
-      usernameField: 'email',
-      passwordField: 'password',
-    },
-
-    async (email, password, done) => {
-      try {
-        const user = await User.findOne({ email, provider: 'website' });
-
-        if (!user) {
-          return done(null, false, { message: 'User not found' });
-        }
-        await user.isValidPassword(password, (error, isMatch) => {
-          if (!isMatch) {
-            return done(null, false, { message: 'Wrong Password' });
-          }
-          return done(null, user, { message: 'Logged in Successfully' });
-        });
-        return false;
-      } catch (error) {
-        return done(error);
-      }
+    const user = await User.findOne({ email });
+    if (user) {
+      return done(null, false, { message: `${email} already exists` });
     }
-  )
-);
 
-passport.serializeUser((user, done) => {
-  done(null, user.id);
-});
+    const newUser = await User.create({
+      firstName,
+      lastName,
+      email,
+      provider
+    });
 
-passport.deserializeUser((id, done) => {
-  User.findById(id).then(user => {
-    done(null, user);
-  });
-});
-
-passport.use(
-  'googleSignUp',
-  new GoogleStrategy({
-    clientID: process.env.GOOGLE_CLIENT_ID,
-    clientSecret: process.env.GOOGLE_CLIENT_SECRET,
-    callbackURL: '/api/auth/signup/google/callback'
-  }, (async (accessToken, refreshToken, profile, done) => {
-    try {
-      const email = profile.emails[0].value;
-      const firstName = profile.name.givenName;
-      const lastName = profile.name.familyName;
-
-      await userValidation.validateAsync({
-        firstName,
-        lastName,
-        email,
-        provider: 'google'
-      });
-      const user = await User.findOne({ email });
-
-      if (user) {
-        return done(null, false, { message: `${email} already exists ` });
-      }
-
-      const newUser = await User.create({
-        firstName,
-        lastName,
-        email,
-        provider: 'google'
-      });
-
-      return done(null, newUser);
-    } catch (err) {
-      return done(err, { message: 'something went wrong ' });
-    }
-  }))
-);
-
-passport.use(
-  'googleLogin',
-  new GoogleStrategy({
-    clientID: process.env.GOOGLE_CLIENT_ID,
-    clientSecret: process.env.GOOGLE_CLIENT_SECRET,
-    callbackURL: '/api/auth/login/google/callback'
-  }, (async (accessToken, refreshToken, profile, done) => {
-    try {
-      const email = profile.emails[0].value;
-
-      const user = await User.findOne({ email });
-
-      if (!user) {
-        return done(null, false, { message: 'User not found ' });
-      }
-
-      return done(null, user);
-    } catch (err) {
-      return done(err);
-    }
-  }))
-);
-
-passport.use(
-  'facebookSignUp',
-  new FacebookStrategy({
-    clientID: process.env.FACABOOK_APP_ID,
-    clientSecret: process.env.FACABOOK_APP_SECRET,
-    callbackURL: '/api/auth/signup/facebook/callback',
-    profileFields: ['displayName', 'name', 'emails']
-  }, (async (accessToken, refreshToken, profile, done) => {
-    try {
-      if (!profile.emails[0].value) {
-        return done(null, false, { message: 'You don\'t use email address on facebook ' });
-      }
-
-      const email = profile.emails[0].value;
-      const firstName = profile.name.givenName;
-      const lastName = profile.name.familyName;
-
-      await userValidation.validateAsync({
-        firstName,
-        lastName,
-        email,
-        provider: 'facebook'
-      });
-
-      const user = await User.findOne({ email });
-
-      if (user) {
-        return done(null, false, { message: `${email} already exists ` });
-      }
-
-      const newUser = await User.create({
-        firstName,
-        lastName,
-        email,
-        provider: 'facebook'
-      });
-
-      return done(null, newUser);
-    } catch (err) {
-      return done(err);
-    }
-  }))
-);
-
-passport.use(
-  'facebookLogIn',
-  new FacebookStrategy({
-    clientID: process.env.FACABOOK_APP_ID,
-    clientSecret: process.env.FACABOOK_APP_SECRET,
-    callbackURL: '/api/auth/login/facebook/callback',
-    profileFields: ['displayName', 'name', 'emails']
-  }, (async (accessToken, refreshToken, profile, done) => {
-    try {
-      if (!profile.emails[0].value) {
-        return done(null, false, { message: 'You don\'t use email address on facebook ' });
-      }
-
-      const email = profile.emails[0].value;
-
-      const user = await User.findOne({ email });
-
-      if (!user) {
-        return done(null, false, { message: 'User not found ' });
-      }
-
-      return done(null, user);
-    } catch (err) {
-      return done(err);
-    }
-  }))
-);
+    return done(null, newUser);
+  } catch (err) {
+    return done(err, { message: 'something went wrong' });
+  }
+};
 
 const sendMail = async (user, token) => {
   const transporter = nodemailer.createTransport({
@@ -243,4 +64,7 @@ const sendMail = async (user, token) => {
   return info;
 };
 
-module.exports = sendMail;
+module.exports = {
+  sendMail,
+  oAuth2Callback
+};

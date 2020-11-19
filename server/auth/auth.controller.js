@@ -6,7 +6,9 @@ const bcrypt = require('bcryptjs');
 const signale = require('signale');
 
 const User = require('../users/user.modal');
-const sendMail = require('./auth.service');
+const { sendMail } = require('./auth.service');
+
+require('./auth.passport');
 
 const sendResponseOAuth2 = async (req, res, next, err, user, info, errType) => {
   if (!user || err) {
