@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
 import {
@@ -17,6 +17,8 @@ import {
   Typography,
 } from '@material-ui/core';
 
+import { DndProvider } from 'react-dnd';
+import { HTML5Backend } from 'react-dnd-html5-backend';
 import Task from './Task/Task';
 import DeleteModal from '../Component/UI/Modal/DeleteModal/DeleteModal';
 import NewTaskModal from '../Component/UI/Modal/NewTaskModal/NewTaskModal';
@@ -24,10 +26,16 @@ import ErrorModal from '../Component/UI/Modal/ErrorModal/ErrorModal';
 import * as actionTypes from '../storage/constant';
 import Spinner from '../Component/UI/Spinner/Spinner';
 
+import Column from '../Component/Draggable/Column/Column';
+import MovableItem from '../Component/Draggable/MovableItem/MovableItem';
+import classes from './Tasks.css';
+
 const Tasks = ({
   tasks, loading, fetchTasks, error
 }) => {
   const history = useHistory();
+  const [items, setItems] = useState(tasks);
+  console.log(tasks);
 
   useEffect(() => {
     fetchTasks();
@@ -37,60 +45,50 @@ const Tasks = ({
     return <Spinner />;
   }
 
-  return (
-    <div>
-      {tasks.length === 0 && error.length === 0 && (
-        <Typography align="center" component="h1"> You do not have task</Typography>
-      )}
-      {
-        error.length !== 0 && (
-          <ErrorModal message={error} />
-        )
-      }
-      <TableContainer>
-        <Table>
-          <TableHead>
-            <TableRow>
-              <TableCell align="left">Status</TableCell>
-              <TableCell align="left">Title</TableCell>
-              <TableCell align="left">Delete</TableCell>
-            </TableRow>
-          </TableHead>
+  const moveCardHandler = (dragIndex, hoverIndex) => {
+    console.log(dragIndex, 'dragIndex');
+    const dragItem = items[dragIndex];
 
-          <TableBody>
-            {tasks.map(task => (
-              <Task
-                key={task._id}
-                id={task._id}
-                title={task.title}
-                body={task.body}
-                status={task.status}
-                onClick={() => history.push(`/delete/${task._id}`)}
-                onTitle={() => history.push(`/tasks/${task._id}`)}
-              />
-            )) }
-          </TableBody>
-        </Table>
-      </TableContainer>
-      <Button
-        variant="contained"
-        color="primary"
-        onClick={() => history.push('/new-task')}
-      >
-        Add a task
-      </Button>
-      <Switch>
-        <Route path="/new-task">
-          <NewTaskModal
-            handleClose={() => history.push('/')}
-          />
-        </Route>
-        <Route path="/delete/:id">
-          <DeleteModal
-            handleClose={() => history.push('/')}
-          />
-        </Route>
-      </Switch>
+    if (dragItem) {
+      setItems((prevState => {
+        const coppiedStateArray = [...prevState];
+
+        // remove item by "hoverIndex" and put "dragItem" instead
+        const prevItem = coppiedStateArray.splice(hoverIndex, 1, dragItem);
+
+        // remove item by "dragIndex" and put "prevItem" instead
+        coppiedStateArray.splice(dragIndex, 1, prevItem[0]);
+
+        return coppiedStateArray;
+      }));
+    }
+  };
+
+  const returnItemsForColumn = columnName => tasks
+    .filter(task => task.status === columnName)
+    .map((task, index) => (
+      <MovableItem
+        key={task._id}
+        id={task._id}
+        name={task.title}
+        currentColumnName={task.status}
+        setItems={setItems}
+        index={index}
+        moveCardHandler={moveCardHandler}
+      />
+    ));
+
+  return (
+    <div className={classes.Tasks}>
+      <DndProvider backend={HTML5Backend}>
+        <Column title={false}>
+          {returnItemsForColumn(false)}
+        </Column>
+
+        <Column title>
+          {returnItemsForColumn(true)}
+        </Column>
+      </DndProvider>
     </div>
   );
 };
