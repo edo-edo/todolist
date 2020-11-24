@@ -4,15 +4,18 @@ import PropTypes from 'prop-types';
 import { useParams, useHistory } from 'react-router-dom';
 
 import {
-  Button,
+  IconButton,
   Dialog,
   DialogActions,
   DialogContent,
   DialogContentText,
   DialogTitle
 } from '@material-ui/core';
+import CancelIcon from '@material-ui/icons/Cancel';
+import DeleteIcon from '@material-ui/icons/Delete';
 
 import * as actionTypes from '../../../../storage/constant';
+import classes from './DeleteModal.css';
 
 const DeleteModal = ({ handleClose, onRemoveTask }) => {
   const { id } = useParams();
@@ -24,7 +27,6 @@ const DeleteModal = ({ handleClose, onRemoveTask }) => {
         onClose={handleClose}
         aria-labelledby="draggable-dialog-title"
       >
-
         <DialogTitle id="draggable-dialog-title">
           Delete task
         </DialogTitle>
@@ -36,19 +38,24 @@ const DeleteModal = ({ handleClose, onRemoveTask }) => {
         </DialogContent>
 
         <DialogActions>
-          <Button autoFocus onClick={handleClose} color="primary">
-            Cancel
-          </Button>
-          <Button
-            onClick={() => {
-              onRemoveTask(id);
-              history.push('/');
-            }}
-            variant="contained"
-            color="secondary"
-          >
-            Delete
-          </Button>
+          <div className={classes.Cancel}>
+            <IconButton onClick={handleClose} aria-label="cancel">
+              <CancelIcon />
+            </IconButton>
+          </div>
+          <div className={classes.Delete}>
+            <IconButton
+              onClick={() => {
+                onRemoveTask(id);
+                history.push('/');
+              }}
+              aria-label="delete"
+            >
+
+              <DeleteIcon />
+            </IconButton>
+          </div>
+
         </DialogActions>
       </Dialog>
     </div>

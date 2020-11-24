@@ -21,6 +21,7 @@ import { DndProvider } from 'react-dnd';
 import { HTML5Backend } from 'react-dnd-html5-backend';
 import Task from './Task/Task';
 import DeleteModal from '../Component/UI/Modal/DeleteModal/DeleteModal';
+import DetailTaskModal from '../Component/UI/Modal/DetailTaskModal/DetailTaskModal';
 import NewTaskModal from '../Component/UI/Modal/NewTaskModal/NewTaskModal';
 import ErrorModal from '../Component/UI/Modal/ErrorModal/ErrorModal';
 import * as actionTypes from '../storage/constant';
@@ -31,11 +32,10 @@ import MovableItem from '../Component/Draggable/MovableItem/MovableItem';
 import classes from './Tasks.css';
 
 const Tasks = ({
-  tasks, loading, fetchTasks, error
+  tasks, loading, fetchTasks, error, fetchTask
 }) => {
   const history = useHistory();
-  const [items, setItems] = useState(tasks);
-  console.log(tasks);
+  const [items, setItems] = useState([]);
 
   useEffect(() => {
     fetchTasks();
@@ -46,7 +46,6 @@ const Tasks = ({
   }
 
   const moveCardHandler = (dragIndex, hoverIndex) => {
-    console.log(dragIndex, 'dragIndex');
     const dragItem = items[dragIndex];
 
     if (dragItem) {
@@ -71,6 +70,11 @@ const Tasks = ({
         key={task._id}
         id={task._id}
         name={task.title}
+        onDelete={() => history.push(`/delete/${task._id}`)}
+        onClick={() => {
+          fetchTask(task._id);
+          history.push(`/tasks/${task._id}`);
+        }}
         currentColumnName={task.status}
         setItems={setItems}
         index={index}
@@ -81,14 +85,31 @@ const Tasks = ({
   return (
     <div className={classes.Tasks}>
       <DndProvider backend={HTML5Backend}>
-        <Column title={false}>
+        <Column status={false}>
           {returnItemsForColumn(false)}
         </Column>
 
-        <Column title>
+        <Column status>
           {returnItemsForColumn(true)}
         </Column>
       </DndProvider>
+      <Switch>
+        <Route path="/new-task">
+          <NewTaskModal
+            handleClose={() => history.push('/')}
+          />
+        </Route>
+        <Route path="/tasks/:id">
+          <DetailTaskModal
+            handleClose={() => history.push('/')}
+          />
+        </Route>
+        <Route path="/delete/:id">
+          <DeleteModal
+            handleClose={() => history.push('/')}
+          />
+        </Route>
+      </Switch>
     </div>
   );
 };
@@ -107,5 +128,6 @@ const mapStateToProps = ({ Reducer: state }) => ({
 });
 const mapDispatchToProps = dispatch => ({
   fetchTasks: () => dispatch({ type: actionTypes.FETCH_TASKS_START }),
+  fetchTask: id => dispatch({ type: actionTypes.FETCH_TASK_START, payload: { id } }),
 });
 export default connect(mapStateToProps, mapDispatchToProps)(Tasks);

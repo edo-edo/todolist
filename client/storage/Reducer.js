@@ -34,7 +34,6 @@ const Reducer = (state = initialState, action) => {
     case actionTypes.FETCH_TASK_START: {
       return {
         ...state,
-        loading: true,
         error: ''
       };
     }
@@ -42,14 +41,12 @@ const Reducer = (state = initialState, action) => {
       return {
         ...state,
         task: action.payload.task,
-        loading: false,
         error: ''
       };
     }
     case actionTypes.FETCH_TASK_FAIL: {
       return {
         ...state,
-        loading: false,
         error: action.payload.message
       };
     }

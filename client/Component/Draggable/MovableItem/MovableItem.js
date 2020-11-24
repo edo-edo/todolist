@@ -2,11 +2,11 @@ import React, { useRef } from 'react';
 import { useDrag, useDrop } from 'react-dnd';
 import { connect } from 'react-redux';
 
-import classes from './MovableItem.css';
+import Item from './Item/Item';
 import * as actionTypes from '../../../storage/constant';
 
 const MovableItem = ({
-  name, id, index, currentColumnName, moveCardHandler, setItems, onCheck
+  name, id, index, currentColumnName, moveCardHandler, setItems, onCheck, onDelete, onClick
 }) => {
   const changeItemColumn = (currentItem, columnName) => {
     setItems(prevState => prevState.map(e => ({
@@ -70,11 +70,15 @@ const MovableItem = ({
           changeItemColumn(item, true);
           if (!item.currentColumnName) {
             onCheck(id, false);
+          } else {
+            console.log('vertical');
           }
         } else {
           changeItemColumn(item, false);
           if (item.currentColumnName) {
             onCheck(id, true);
+          } else {
+            console.log('vertical');
           }
         }
       }
@@ -89,9 +93,14 @@ const MovableItem = ({
   drag(drop(ref));
 
   return (
-    <div ref={ref} className={classes.MovableItem} style={{ opacity }}>
-      {name}
-    </div>
+    <Item
+      reference={ref}
+      opacity={opacity}
+      name={name}
+      id={id}
+      onDelete={onDelete}
+      onClick={onClick}
+    />
   );
 };
 const mapDispatchToProps = dispatch => ({
