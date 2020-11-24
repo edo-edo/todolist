@@ -1,5 +1,4 @@
 .Item{
-  cursor: pointer;
   border-radius: 5px;
   background-color: white;
   height: 40px;
@@ -15,4 +14,9 @@
 
 .Item button {
   color: rgb(223, 0, 0);
+}
+
+.Item H2 {
+  width: 140px;
+  cursor: pointer;
 }

@@ -1,11 +1,23 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { useDrop } from 'react-dnd';
 import classNames from 'classnames';
 import PropTypes from 'prop-types';
+import {
+  Avatar,
+  ListItem,
+  ListItemAvatar,
+  ListItemText,
+  Typography
+} from '@material-ui/core';
+import AddIcon from '@material-ui/icons/Add';
 
 import classes from './Column.css';
+import NewTaskModal from '../../UI/Modal/NewTaskModal/NewTaskModal';
 
-const Column = ({ children, status }) => {
+const Column = ({
+  children, status, title, onCreate
+}) => {
+  const [isAddTaskOpen, setisAddTaskOpen] = useState(false);
   const [, drop] = useDrop({
     accept: 'Our first type',
     drop: () => ({ name: status }),
@@ -32,16 +44,33 @@ const Column = ({ children, status }) => {
   // };
 
   return (
-    <div ref={drop} className={styleColumn}>
-      <p>{status}</p>
-      {children}
+    <div>
+      <Typography align="center" component="h6" variant="h5">{title}</Typography>
+      <div ref={drop} className={styleColumn}>
+        {children}
+        <ListItem button onClick={() => setisAddTaskOpen(true)}>
+          <ListItemAvatar>
+            <Avatar>
+              <AddIcon />
+            </Avatar>
+          </ListItemAvatar>
+          <ListItemText primary="Add task" />
+        </ListItem>
+      </div>
+      <NewTaskModal
+        status={status}
+        open={isAddTaskOpen}
+        handleClose={() => setisAddTaskOpen(false)}
+      />
     </div>
   );
 };
+
 Column.propTypes = {
   children: PropTypes.arrayOf(PropTypes.object).isRequired,
-  status: PropTypes.bool.isRequired
-
+  title: PropTypes.string.isRequired,
+  status: PropTypes.bool.isRequired,
+  onCreate: PropTypes.func.isRequired
 };
 
 export default Column;

@@ -6,7 +6,15 @@ import Item from './Item/Item';
 import * as actionTypes from '../../../storage/constant';
 
 const MovableItem = ({
-  name, id, index, currentColumnName, moveCardHandler, setItems, onCheck, onDelete, onClick
+  name,
+  id,
+  index,
+  currentColumnName,
+  moveCardHandler,
+  setItems,
+  onCheck,
+  onDelete,
+  onClick,
 }) => {
   const changeItemColumn = (currentItem, columnName) => {
     setItems(prevState => prevState.map(e => ({

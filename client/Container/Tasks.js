@@ -1,25 +1,9 @@
 import React, { useEffect, useState } from 'react';
 import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
-import {
-  useHistory,
-  Route,
-  Switch,
-} from 'react-router-dom';
-import {
-  Table,
-  TableBody,
-  TableCell,
-  TableContainer,
-  TableHead,
-  TableRow,
-  Button,
-  Typography,
-} from '@material-ui/core';
 
 import { DndProvider } from 'react-dnd';
 import { HTML5Backend } from 'react-dnd-html5-backend';
-import Task from './Task/Task';
 import DeleteModal from '../Component/UI/Modal/DeleteModal/DeleteModal';
 import DetailTaskModal from '../Component/UI/Modal/DetailTaskModal/DetailTaskModal';
 import NewTaskModal from '../Component/UI/Modal/NewTaskModal/NewTaskModal';
@@ -34,18 +18,24 @@ import classes from './Tasks.css';
 const Tasks = ({
   tasks, loading, fetchTasks, error, fetchTask
 }) => {
-  const history = useHistory();
-  const [items, setItems] = useState([]);
-
   useEffect(() => {
     fetchTasks();
   }, []);
+
+  const [items, setItems] = useState([]);
+  const [isDeleteOpen, setisDeleteOpen] = useState({
+    status: false,
+    id: ''
+  });
+  const [isDetailOpen, setisDetailOpen] = useState(false);
+  const [isAddTaskOpen, setisAddTaskOpen] = useState(false);
 
   if (loading) {
     return <Spinner />;
   }
 
   const moveCardHandler = (dragIndex, hoverIndex) => {
+    console.log(dragIndex, 'dragIndex');
     const dragItem = items[dragIndex];
 
     if (dragItem) {
@@ -70,10 +60,10 @@ const Tasks = ({
         key={task._id}
         id={task._id}
         name={task.title}
-        onDelete={() => history.push(`/delete/${task._id}`)}
+        onDelete={() => setisDeleteOpen({ status: true, id: task._id })}
         onClick={() => {
           fetchTask(task._id);
-          history.push(`/tasks/${task._id}`);
+          setisDetailOpen(true);
         }}
         currentColumnName={task.status}
         setItems={setItems}
@@ -85,31 +75,17 @@ const Tasks = ({
   return (
     <div className={classes.Tasks}>
       <DndProvider backend={HTML5Backend}>
-        <Column status={false}>
+        <Column status={false} title="Do it" onCreate={() => setisAddTaskOpen(true)}>
           {returnItemsForColumn(false)}
         </Column>
 
-        <Column status>
+        <Column status title="Done" onCreate={() => setisAddTaskOpen(true)}>
           {returnItemsForColumn(true)}
         </Column>
       </DndProvider>
-      <Switch>
-        <Route path="/new-task">
-          <NewTaskModal
-            handleClose={() => history.push('/')}
-          />
-        </Route>
-        <Route path="/tasks/:id">
-          <DetailTaskModal
-            handleClose={() => history.push('/')}
-          />
-        </Route>
-        <Route path="/delete/:id">
-          <DeleteModal
-            handleClose={() => history.push('/')}
-          />
-        </Route>
-      </Switch>
+      <DetailTaskModal open={isDetailOpen} handleClose={() => setisDetailOpen(false)} />
+      <NewTaskModal open={isAddTaskOpen} handleClose={() => setisAddTaskOpen(false)} />
+      <DeleteModal open={isDeleteOpen} handleClose={() => setisDeleteOpen({ status: false, id: '' })} />
     </div>
   );
 };

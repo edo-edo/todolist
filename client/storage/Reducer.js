@@ -34,7 +34,8 @@ const Reducer = (state = initialState, action) => {
     case actionTypes.FETCH_TASK_START: {
       return {
         ...state,
-        error: ''
+        error: '',
+        task: {}
       };
     }
     case actionTypes.FETCH_TASK_SUCCESS: {
