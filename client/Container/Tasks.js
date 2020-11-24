@@ -28,7 +28,6 @@ const Tasks = ({
     id: ''
   });
   const [isDetailOpen, setisDetailOpen] = useState(false);
-  const [isAddTaskOpen, setisAddTaskOpen] = useState(false);
 
   if (loading) {
     return <Spinner />;
@@ -75,16 +74,15 @@ const Tasks = ({
   return (
     <div className={classes.Tasks}>
       <DndProvider backend={HTML5Backend}>
-        <Column status={false} title="Do it" onCreate={() => setisAddTaskOpen(true)}>
+        <Column status={false} title="Do it">
           {returnItemsForColumn(false)}
         </Column>
 
-        <Column status title="Done" onCreate={() => setisAddTaskOpen(true)}>
+        <Column status title="Done">
           {returnItemsForColumn(true)}
         </Column>
       </DndProvider>
       <DetailTaskModal open={isDetailOpen} handleClose={() => setisDetailOpen(false)} />
-      <NewTaskModal open={isAddTaskOpen} handleClose={() => setisAddTaskOpen(false)} />
       <DeleteModal open={isDeleteOpen} handleClose={() => setisDeleteOpen({ status: false, id: '' })} />
     </div>
   );
