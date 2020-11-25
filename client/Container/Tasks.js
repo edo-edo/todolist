@@ -34,7 +34,6 @@ const Tasks = ({
   }
 
   const moveCardHandler = (dragIndex, hoverIndex) => {
-    console.log(dragIndex, 'dragIndex');
     const dragItem = items[dragIndex];
 
     if (dragItem) {

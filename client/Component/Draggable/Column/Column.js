@@ -1,6 +1,5 @@
 import React, { useState } from 'react';
 import { useDrop } from 'react-dnd';
-import classNames from 'classnames';
 import PropTypes from 'prop-types';
 import {
   Avatar,
@@ -15,10 +14,10 @@ import classes from './Column.css';
 import NewTaskModal from '../../UI/Modal/NewTaskModal/NewTaskModal';
 
 const Column = ({
-  children, status, title, onCreate
+  children, status, title
 }) => {
   const [isAddTaskOpen, setisAddTaskOpen] = useState(false);
-  const [, drop] = useDrop({
+  const [{ isOver, canDrop }, drop] = useDrop({
     accept: 'Our first type',
     drop: () => ({ name: status }),
     collect: monitor => ({
@@ -26,27 +25,24 @@ const Column = ({
       canDrop: monitor.canDrop(),
     }),
   });
-  const styleColumn = classNames({
-    [classes.Column]: true,
-    [classes.ColumnSecond]: status
-  });
 
-  // const getBackgroundColor = () => {
-  //   if (isOver) {
-  //     if (canDrop) {
-  //       return 'rgb(188,251,255)';
-  //     } if (!canDrop) {
-  //       return 'rgb(255,188,188)';
-  //     }
-  //   } else {
-  //     return '';
-  //   }
-  // };
+  const getBackgroundColor = () => {
+    if (isOver) {
+      if (canDrop) {
+        return 'rgb(188,251,255)';
+      } if (!canDrop) {
+        return 'rgb(255,188,188)';
+      }
+    } else {
+      return '';
+    }
+    return '';
+  };
 
   return (
     <div>
       <Typography align="center" component="h6" variant="h5">{title}</Typography>
-      <div ref={drop} className={styleColumn}>
+      <div ref={drop} className={classes.Column} style={{ backgroundColor: getBackgroundColor() }}>
         {children}
         <ListItem button onClick={() => setisAddTaskOpen(true)}>
           <ListItemAvatar>
@@ -69,8 +65,7 @@ const Column = ({
 Column.propTypes = {
   children: PropTypes.arrayOf(PropTypes.object).isRequired,
   title: PropTypes.string.isRequired,
-  status: PropTypes.bool.isRequired,
-  onCreate: PropTypes.func.isRequired
+  status: PropTypes.bool.isRequired
 };
 
 export default Column;

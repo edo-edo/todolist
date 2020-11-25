@@ -4,13 +4,14 @@ import { useFormik } from 'formik';
 import * as Yup from 'yup';
 import { connect } from 'react-redux';
 import {
-  Button,
+  IconButton,
   Dialog,
   DialogActions,
   DialogContent,
-  DialogTitle,
   TextField
 } from '@material-ui/core';
+import SaveAltOutlinedIcon from '@material-ui/icons/SaveAltOutlined';
+import CloseRoundedIcon from '@material-ui/icons/CloseRounded';
 
 import * as actionTypes from '../../../../storage/constant';
 import classes from './NewTaskModal.css';
@@ -38,7 +39,8 @@ const NewTaskModal = ({
     onSubmit: values => {
       onAddTask(values);
       handleClose();
-    },
+      formik.resetForm();
+    }
   });
 
   return (
@@ -48,50 +50,52 @@ const NewTaskModal = ({
         onClose={handleClose}
         aria-labelledby="draggable-dialog-title"
       >
-        <DialogTitle id="draggable-dialog-title">
-          <div>
-            <TextField
-              onChange={formik.handleChange}
-              fullWidth
-              id="title"
-              label="Title"
-              value={formik.values.title}
-              variant="outlined"
-            />
-            {formik.touched.title && formik.errors.title && (
-            <div className={classes.Error}>{formik.errors.title}</div>
-            )}
-          </div>
-        </DialogTitle>
         <DialogContent dividers>
-          <div>
-            <TextField
-              onChange={formik.handleChange}
-              id="body"
-              label="Body"
-              multiline
-              fullWidth
-              rows={4}
-              value={formik.values.body}
-            />
-            {formik.touched.body && formik.errors.body && (
-            <div className={classes.Error}>{formik.errors.body}</div>
-            )}
-          </div>
+          <form>
+            <div className={classes.Title}>
+              <TextField
+                onChange={formik.handleChange}
+                fullWidth
+                id="title"
+                label="Title"
+                value={formik.values.title}
+                variant="outlined"
+              />
+              {formik.touched.title && formik.errors.title && (
+              <div className={classes.Error}>{formik.errors.title}</div>
+              )}
+            </div>
+            <div>
+              <TextField
+                onChange={formik.handleChange}
+                id="body"
+                label="Body"
+                multiline
+                fullWidth
+                rows={4}
+                value={formik.values.body}
+              />
+              {formik.touched.body && formik.errors.body && (
+              <div className={classes.Error}>{formik.errors.body}</div>
+              )}
+            </div>
+          </form>
         </DialogContent>
 
         <DialogActions>
-          <Button
-            onClick={formik.handleSubmit}
-            type="submit"
-            variant="contained"
-            color="primary"
-          >
-            Save task
-          </Button>
-          <Button autoFocus onClick={handleClose} color="primary">
-            Cancel
-          </Button>
+          <div className={classes.Save}>
+            <IconButton
+              onClick={formik.handleSubmit}
+              aria-label="submit"
+            >
+
+              <SaveAltOutlinedIcon />
+            </IconButton>
+          </div>
+
+          <IconButton type="reset" onClick={() => { handleClose(); formik.resetForm(); }}>
+            <CloseRoundedIcon />
+          </IconButton>
         </DialogActions>
       </Dialog>
     </div>
@@ -100,6 +104,7 @@ const NewTaskModal = ({
 
 NewTaskModal.propTypes = {
   status: PropTypes.bool.isRequired,
+  open: PropTypes.bool.isRequired,
   handleClose: PropTypes.func.isRequired,
   onAddTask: PropTypes.func.isRequired
 };
