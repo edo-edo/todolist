@@ -14,7 +14,7 @@ import classes from './Column.css';
 import NewTaskModal from '../../UI/Modal/NewTaskModal/NewTaskModal';
 
 const Column = ({
-  children, status, title
+  children, status, columntitle
 }) => {
   const [isAddTaskOpen, setisAddTaskOpen] = useState(false);
   const [{ isOver, canDrop }, drop] = useDrop({
@@ -41,7 +41,7 @@ const Column = ({
 
   return (
     <div>
-      <Typography align="center" component="h6" variant="h5">{title}</Typography>
+      <Typography align="center" component="h6" variant="h5">{columntitle}</Typography>
       <div ref={drop} className={classes.Column} style={{ backgroundColor: getBackgroundColor() }}>
         {children}
         <ListItem button onClick={() => setisAddTaskOpen(true)}>
@@ -64,7 +64,7 @@ const Column = ({
 
 Column.propTypes = {
   children: PropTypes.arrayOf(PropTypes.object).isRequired,
-  title: PropTypes.string.isRequired,
+  columntitle: PropTypes.string.isRequired,
   status: PropTypes.bool.isRequired
 };
 

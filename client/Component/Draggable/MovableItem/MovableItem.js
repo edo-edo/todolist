@@ -1,12 +1,13 @@
 import React, { useRef } from 'react';
 import { useDrag, useDrop } from 'react-dnd';
 import { connect } from 'react-redux';
+import PropTypes from 'prop-types';
 
 import Item from './Item/Item';
 import * as actionTypes from '../../../storage/constant';
 
 const MovableItem = ({
-  name,
+  title,
   id,
   index,
   currentColumnName,
@@ -25,11 +26,11 @@ const MovableItem = ({
       }
       const dragIndex = item.index;
       const hoverIndex = index;
-      // Don't replace items with themselves
+
       if (dragIndex === hoverIndex) {
         return;
       }
-      // Determine rectangle on screen
+
       const hoveredRect = ref.current.getBoundingClientRect();
       const hoverMiddleY = (hoveredRect.bottom - hoveredRect.top) / 2;
       const mousePosition = monitor.getClientOffset();
@@ -42,29 +43,23 @@ const MovableItem = ({
       if (dragIndex > hoverIndex && hoverClientY > hoverMiddleY) {
         return;
       }
-      moveCardHandler(dragIndex, hoverIndex, currentColumnName, id);
+      moveCardHandler(item.id, id);
       item.index = hoverIndex;
     },
   });
 
   const [{ isDragging }, drag] = useDrag({
     item: {
-      index, name, id, currentColumnName, type: 'Our first type'
+      index, id, currentColumnName, type: 'Our first type'
     },
     end: (item, monitor) => {
       const dropResult = monitor.getDropResult();
 
       if (dropResult) {
-        if (dropResult.name) {
-          if (!item.currentColumnName) {
-            onCheck(id, false);
-          } else {
-            console.log('vertical');
-          }
-        } else if (item.currentColumnName) {
+        if (dropResult.name && !item.currentColumnName) {
+          onCheck(id, false);
+        } else if (!dropResult.name && item.currentColumnName) {
           onCheck(id, true);
-        } else {
-          console.log('vertical');
         }
       }
     },
@@ -81,13 +76,25 @@ const MovableItem = ({
     <Item
       reference={ref}
       opacity={opacity}
-      name={name}
+      title={title}
       id={id}
       onDelete={onDelete}
       onClick={onClick}
     />
   );
 };
+
+MovableItem.propTypes = {
+  title: PropTypes.string.isRequired,
+  id: PropTypes.string.isRequired,
+  index: PropTypes.number.isRequired,
+  currentColumnName: PropTypes.bool.isRequired,
+  moveCardHandler: PropTypes.func.isRequired,
+  onCheck: PropTypes.func.isRequired,
+  onDelete: PropTypes.func.isRequired,
+  onClick: PropTypes.func.isRequired
+};
+
 const mapDispatchToProps = dispatch => ({
   onCheck: (id, status) => dispatch({ type: actionTypes.ON_CHECK_START, payload: { id, status } })
 });

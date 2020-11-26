@@ -1,29 +1,25 @@
 import React, { useEffect, useState } from 'react';
 import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
-
 import { DndProvider } from 'react-dnd';
 import { HTML5Backend } from 'react-dnd-html5-backend';
-import { filter, findIndex } from 'lodash';
+
+import classes from './Tasks.css';
 import DeleteModal from '../Component/UI/Modal/DeleteModal/DeleteModal';
 import DetailTaskModal from '../Component/UI/Modal/DetailTaskModal/DetailTaskModal';
-import NewTaskModal from '../Component/UI/Modal/NewTaskModal/NewTaskModal';
 import ErrorModal from '../Component/UI/Modal/ErrorModal/ErrorModal';
 import * as actionTypes from '../storage/constant';
 import Spinner from '../Component/UI/Spinner/Spinner';
-
 import Column from '../Component/Draggable/Column/Column';
 import MovableItem from '../Component/Draggable/MovableItem/MovableItem';
-import classes from './Tasks.css';
 
 const Tasks = ({
-  tasks, loading, fetchTasks, error, fetchTask, setTask
+  tasks, loading, fetchTasks, error, fetchTask, setTasks
 }) => {
   useEffect(() => {
     fetchTasks();
   }, []);
 
-  console.log(tasks);
   const [isDeleteOpen, setisDeleteOpen] = useState({
     status: false,
     id: ''
@@ -34,21 +30,16 @@ const Tasks = ({
     return <Spinner />;
   }
 
-  const moveCardHandler = (dragIndex, hoverIndex, currentColumnName) => {
-    const items = tasks.filter(item => item.status === currentColumnName);
-    const itemsPrevColums = tasks.filter(item => item.status === !currentColumnName);
+  const moveCardHandler = (firstId, secondId) => {
     const prevTasks = [...tasks];
+    const dragTask = prevTasks.find(task => task._id === firstId);
+    const hoverTask = prevTasks.find(task => task._id === secondId);
 
-    let firstItem = items[dragIndex];
-    if (firstItem === undefined) {
-      firstItem = itemsPrevColums[dragIndex];
-    }
-    const secondItem = items[hoverIndex];
-    const firstIndex = findIndex(tasks, firstItem);
-    const secondIndex = findIndex(tasks, secondItem);
-    prevTasks[firstIndex] = secondItem;
-    prevTasks[secondIndex] = firstItem;
-    setTask(prevTasks);
+    const dragArrayIndex = prevTasks.indexOf(dragTask);
+    const hoverArrayIndex = prevTasks.indexOf(hoverTask);
+    prevTasks[dragArrayIndex] = hoverTask;
+    prevTasks[hoverArrayIndex] = dragTask;
+    setTasks(prevTasks);
   };
 
   const returnItemsForColumn = columnName => tasks
@@ -57,7 +48,7 @@ const Tasks = ({
       <MovableItem
         key={task._id}
         id={task._id}
-        name={task.title}
+        title={task.title}
         onDelete={() => setisDeleteOpen({ status: true, id: task._id })}
         onClick={() => {
           fetchTask(task._id);
@@ -71,12 +62,17 @@ const Tasks = ({
 
   return (
     <div className={classes.Tasks}>
+      {
+        error.length !== 0 && (
+          <ErrorModal message={error} />
+        )
+      }
       <DndProvider backend={HTML5Backend}>
-        <Column status={false} title="Do it">
+        <Column status={false} columntitle="Do it">
           {returnItemsForColumn(false)}
         </Column>
 
-        <Column status title="Done">
+        <Column status columntitle="Done">
           {returnItemsForColumn(true)}
         </Column>
       </DndProvider>
@@ -90,7 +86,9 @@ Tasks.propTypes = {
   tasks: PropTypes.arrayOf(PropTypes.object).isRequired,
   loading: PropTypes.bool.isRequired,
   error: PropTypes.string.isRequired,
-  fetchTasks: PropTypes.func.isRequired
+  fetchTasks: PropTypes.func.isRequired,
+  fetchTask: PropTypes.func.isRequired,
+  setTasks: PropTypes.func.isRequired
 };
 
 const mapStateToProps = ({ Reducer: state }) => ({
@@ -101,6 +99,6 @@ const mapStateToProps = ({ Reducer: state }) => ({
 const mapDispatchToProps = dispatch => ({
   fetchTasks: () => dispatch({ type: actionTypes.FETCH_TASKS_START }),
   fetchTask: id => dispatch({ type: actionTypes.FETCH_TASK_START, payload: { id } }),
-  setTask: tasks => dispatch({ type: actionTypes.SET_TASKS, payload: { tasks } }),
+  setTasks: tasks => dispatch({ type: actionTypes.SET_TASKS, payload: { tasks } }),
 });
 export default connect(mapStateToProps, mapDispatchToProps)(Tasks);
