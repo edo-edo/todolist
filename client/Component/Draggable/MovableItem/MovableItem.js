@@ -11,18 +11,10 @@ const MovableItem = ({
   index,
   currentColumnName,
   moveCardHandler,
-  setItems,
   onCheck,
   onDelete,
   onClick,
 }) => {
-  const changeItemColumn = (currentItem, columnName) => {
-    setItems(prevState => prevState.map(e => ({
-      ...e,
-      column: e.name === currentItem.name ? columnName : e.column,
-    })));
-  };
-
   const ref = useRef(null);
 
   const [, drop] = useDrop({
@@ -38,30 +30,19 @@ const MovableItem = ({
         return;
       }
       // Determine rectangle on screen
-      const hoverBoundingRect = ref.current?.getBoundingClientRect();
-      // Get vertical middle
-      const hoverMiddleY = (hoverBoundingRect.bottom - hoverBoundingRect.top) / 2;
-      // Determine mouse position
-      const clientOffset = monitor.getClientOffset();
-      // Get pixels to the top
-      const hoverClientY = clientOffset.y - hoverBoundingRect.top;
-      // Only perform the move when the mouse has crossed half of the items height
-      // When dragging downwards, only move when the cursor is below 50%
-      // When dragging upwards, only move when the cursor is above 50%
-      // Dragging downwards
+      const hoveredRect = ref.current.getBoundingClientRect();
+      const hoverMiddleY = (hoveredRect.bottom - hoveredRect.top) / 2;
+      const mousePosition = monitor.getClientOffset();
+      const hoverClientY = mousePosition.y - hoveredRect.top;
+
       if (dragIndex < hoverIndex && hoverClientY < hoverMiddleY) {
         return;
       }
-      // Dragging upwards
+
       if (dragIndex > hoverIndex && hoverClientY > hoverMiddleY) {
         return;
       }
-      // Time to actually perform the action
-      moveCardHandler(dragIndex, hoverIndex);
-      // Note: we're mutating the monitor item here!
-      // Generally it's better to avoid mutations,
-      // but it's good here for the sake of performance
-      // to avoid expensive index searches.
+      moveCardHandler(dragIndex, hoverIndex, currentColumnName, id);
       item.index = hoverIndex;
     },
   });
@@ -75,19 +56,15 @@ const MovableItem = ({
 
       if (dropResult) {
         if (dropResult.name) {
-          changeItemColumn(item, true);
           if (!item.currentColumnName) {
             onCheck(id, false);
           } else {
             console.log('vertical');
           }
+        } else if (item.currentColumnName) {
+          onCheck(id, true);
         } else {
-          changeItemColumn(item, false);
-          if (item.currentColumnName) {
-            onCheck(id, true);
-          } else {
-            console.log('vertical');
-          }
+          console.log('vertical');
         }
       }
     },

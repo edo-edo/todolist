@@ -17,10 +17,18 @@ const Reducer = (state = initialState, action) => {
       };
     }
     case actionTypes.FETCH_TASKS_SUCCESS: {
+      action.payload.tasks.sort((a, b) => a.status - b.status);
       return {
         ...state,
         tasks: action.payload.tasks,
         loading: false,
+        error: ''
+      };
+    }
+    case actionTypes.SET_TASKS: {
+      return {
+        ...state,
+        tasks: action.payload.tasks,
         error: ''
       };
     }

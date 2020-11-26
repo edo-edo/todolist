@@ -4,6 +4,7 @@ import PropTypes from 'prop-types';
 
 import { DndProvider } from 'react-dnd';
 import { HTML5Backend } from 'react-dnd-html5-backend';
+import { filter, findIndex } from 'lodash';
 import DeleteModal from '../Component/UI/Modal/DeleteModal/DeleteModal';
 import DetailTaskModal from '../Component/UI/Modal/DetailTaskModal/DetailTaskModal';
 import NewTaskModal from '../Component/UI/Modal/NewTaskModal/NewTaskModal';
@@ -16,13 +17,13 @@ import MovableItem from '../Component/Draggable/MovableItem/MovableItem';
 import classes from './Tasks.css';
 
 const Tasks = ({
-  tasks, loading, fetchTasks, error, fetchTask
+  tasks, loading, fetchTasks, error, fetchTask, setTask
 }) => {
   useEffect(() => {
     fetchTasks();
   }, []);
 
-  const [items, setItems] = useState([]);
+  console.log(tasks);
   const [isDeleteOpen, setisDeleteOpen] = useState({
     status: false,
     id: ''
@@ -33,22 +34,21 @@ const Tasks = ({
     return <Spinner />;
   }
 
-  const moveCardHandler = (dragIndex, hoverIndex) => {
-    const dragItem = items[dragIndex];
+  const moveCardHandler = (dragIndex, hoverIndex, currentColumnName) => {
+    const items = tasks.filter(item => item.status === currentColumnName);
+    const itemsPrevColums = tasks.filter(item => item.status === !currentColumnName);
+    const prevTasks = [...tasks];
 
-    if (dragItem) {
-      setItems((prevState => {
-        const coppiedStateArray = [...prevState];
-
-        // remove item by "hoverIndex" and put "dragItem" instead
-        const prevItem = coppiedStateArray.splice(hoverIndex, 1, dragItem);
-
-        // remove item by "dragIndex" and put "prevItem" instead
-        coppiedStateArray.splice(dragIndex, 1, prevItem[0]);
-
-        return coppiedStateArray;
-      }));
+    let firstItem = items[dragIndex];
+    if (firstItem === undefined) {
+      firstItem = itemsPrevColums[dragIndex];
     }
+    const secondItem = items[hoverIndex];
+    const firstIndex = findIndex(tasks, firstItem);
+    const secondIndex = findIndex(tasks, secondItem);
+    prevTasks[firstIndex] = secondItem;
+    prevTasks[secondIndex] = firstItem;
+    setTask(prevTasks);
   };
 
   const returnItemsForColumn = columnName => tasks
@@ -64,7 +64,6 @@ const Tasks = ({
           setisDetailOpen(true);
         }}
         currentColumnName={task.status}
-        setItems={setItems}
         index={index}
         moveCardHandler={moveCardHandler}
       />
@@ -102,5 +101,6 @@ const mapStateToProps = ({ Reducer: state }) => ({
 const mapDispatchToProps = dispatch => ({
   fetchTasks: () => dispatch({ type: actionTypes.FETCH_TASKS_START }),
   fetchTask: id => dispatch({ type: actionTypes.FETCH_TASK_START, payload: { id } }),
+  setTask: tasks => dispatch({ type: actionTypes.SET_TASKS, payload: { tasks } }),
 });
 export default connect(mapStateToProps, mapDispatchToProps)(Tasks);
