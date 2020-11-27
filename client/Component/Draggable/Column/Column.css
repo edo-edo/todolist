@@ -9,3 +9,16 @@
   flex-direction: column;
   justify-content: center;
 }
+
+.ColumnDrop {
+  background-color: rgb(188,251,255);
+}
+
+.Column button {
+  justify-content: start;
+  margin-left: 5px;
+}
+
+.AddIcon  {
+  color: #3f50b5;
+}

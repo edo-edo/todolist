@@ -1,24 +1,22 @@
 import React, { useState } from 'react';
 import { useDrop } from 'react-dnd';
 import PropTypes from 'prop-types';
+import classNames from 'classnames';
 import {
-  Avatar,
-  ListItem,
-  ListItemAvatar,
-  ListItemText,
-  Typography
+  Typography,
+  IconButton
 } from '@material-ui/core';
-import AddIcon from '@material-ui/icons/Add';
+import AddCircleIcon from '@material-ui/icons/AddCircle';
 
 import classes from './Column.css';
 import NewTaskModal from '../../UI/Modal/NewTaskModal/NewTaskModal';
 
 const Column = ({
-  children, status, columntitle
+  children, status, columntitle, dragType
 }) => {
   const [isAddTaskOpen, setisAddTaskOpen] = useState(false);
   const [{ isOver, canDrop }, drop] = useDrop({
-    accept: 'Our first type',
+    accept: dragType,
     drop: () => ({ name: status }),
     collect: monitor => ({
       isOver: monitor.isOver(),
@@ -26,32 +24,20 @@ const Column = ({
     }),
   });
 
-  const getBackgroundColor = () => {
-    if (isOver) {
-      if (canDrop) {
-        return 'rgb(188,251,255)';
-      } if (!canDrop) {
-        return 'rgb(255,188,188)';
-      }
-    } else {
-      return '';
-    }
-    return '';
-  };
+  const styleColumn = classNames({
+    [classes.Column]: true,
+    [classes.ColumnDrop]: isOver && canDrop
+  });
 
   return (
     <div>
       <Typography align="center" component="h6" variant="h5">{columntitle}</Typography>
-      <div ref={drop} className={classes.Column} style={{ backgroundColor: getBackgroundColor() }}>
+      <div ref={drop} className={styleColumn}>
         {children}
-        <ListItem button onClick={() => setisAddTaskOpen(true)}>
-          <ListItemAvatar>
-            <Avatar>
-              <AddIcon />
-            </Avatar>
-          </ListItemAvatar>
-          <ListItemText primary="Add task" />
-        </ListItem>
+        <IconButton size="small" onClick={() => setisAddTaskOpen(true)}>
+          <AddCircleIcon className={classes.AddIcon} fontSize="large" />
+          Add task
+        </IconButton>
       </div>
       <NewTaskModal
         status={status}
@@ -64,6 +50,7 @@ const Column = ({
 
 Column.propTypes = {
   children: PropTypes.arrayOf(PropTypes.object).isRequired,
+  dragType: PropTypes.string.isRequired,
   columntitle: PropTypes.string.isRequired,
   status: PropTypes.bool.isRequired
 };

@@ -15,11 +15,12 @@ const MovableItem = ({
   onCheck,
   onDelete,
   onClick,
+  dragType
 }) => {
   const ref = useRef(null);
 
   const [, drop] = useDrop({
-    accept: 'Our first type',
+    accept: dragType,
     hover(item, monitor) {
       if (!ref.current) {
         return;
@@ -48,9 +49,9 @@ const MovableItem = ({
     },
   });
 
-  const [{ isDragging }, drag] = useDrag({
+  const [, drag] = useDrag({
     item: {
-      index, id, currentColumnName, type: 'Our first type'
+      index, id, currentColumnName, type: dragType
     },
     end: (item, monitor) => {
       const dropResult = monitor.getDropResult();
@@ -68,14 +69,12 @@ const MovableItem = ({
     }),
   });
 
-  const opacity = isDragging ? 0.4 : 1;
-
   drag(drop(ref));
 
   return (
     <Item
+      currentColumnName={currentColumnName}
       reference={ref}
-      opacity={opacity}
       title={title}
       id={id}
       onDelete={onDelete}
@@ -85,6 +84,7 @@ const MovableItem = ({
 };
 
 MovableItem.propTypes = {
+  dragType: PropTypes.string.isRequired,
   title: PropTypes.string.isRequired,
   id: PropTypes.string.isRequired,
   index: PropTypes.number.isRequired,

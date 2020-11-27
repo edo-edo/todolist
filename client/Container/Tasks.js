@@ -26,6 +26,8 @@ const Tasks = ({
   });
   const [isDetailOpen, setisDetailOpen] = useState(false);
 
+  const dragType = 'Drag type';
+
   if (loading) {
     return <Spinner />;
   }
@@ -46,6 +48,7 @@ const Tasks = ({
     .filter(task => task.status === columnName)
     .map((task, index) => (
       <MovableItem
+        dragType={dragType}
         key={task._id}
         id={task._id}
         title={task.title}
@@ -68,11 +71,11 @@ const Tasks = ({
         )
       }
       <DndProvider backend={HTML5Backend}>
-        <Column status={false} columntitle="Do it">
+        <Column status={false} columntitle="Do it" dragType={dragType}>
           {returnItemsForColumn(false)}
         </Column>
 
-        <Column status columntitle="Done">
+        <Column status columntitle="Done" dragType={dragType}>
           {returnItemsForColumn(true)}
         </Column>
       </DndProvider>
