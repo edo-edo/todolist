@@ -43,3 +43,5 @@ export const LOG_IN_GOOGLE = 'LOG_IN_GOOGLE';
 export const LOG_OUT = 'LOG_OUT';
 
 export const SET_CURRENT_USER = 'SET_CURRENT_USER';
+
+export const SET_TASKS = 'SET_TASKS';

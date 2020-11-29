@@ -7,7 +7,7 @@ module.exports = {
   entry: {
     app: [
       './client/index.js',
-      'webpack-hot-middleware/client?reload=true'
+      `webpack-hot-middleware/client?path=${process.env.API_URL}/__webpack_hmr&timeout=2000&reload=true`
     ]
   },
   
@@ -27,7 +27,7 @@ module.exports = {
     }
   },
 
-
+  
   plugins: [
     new webpack.HotModuleReplacementPlugin(),
     new htmlWebpackPlugin({

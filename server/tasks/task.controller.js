@@ -7,7 +7,6 @@ const taskValidation = require('./task.validation');
 const getTasks = async (req, res) => {
   try {
     const { _id } = req.user;
-
     const tasks = await Task.find({ user: _id }, { body: 0, __v: 0 });
     return res.json({ tasks });
   } catch (err) {
@@ -22,7 +21,11 @@ const createTask = async (req, res) => {
     const { _id } = req.user;
     const { title, body, status } = req.body;
 
-    await taskValidation.validateAsync(req.body, { abortEarly: false });
+    const { error } = await taskValidation.validate(req.body);
+
+    if (error) {
+      return res.status(400).send(error.details[0].message);
+    }
 
     const task = await Task.create({
       user: _id,
@@ -79,7 +82,11 @@ const updateTask = async (req, res) => {
     const { status } = req.body;
     const { _id } = req.user;
 
-    Joi.attempt(status, Joi.boolean());
+    try {
+      Joi.attempt(status, Joi.boolean(), { convert: false });
+    } catch (error) {
+      return res.status(400).send(error.details[0].message);
+    }
 
     const { nModified } = await Task.updateOne(
       { _id: req.params.id, user: _id },
@@ -90,11 +97,11 @@ const updateTask = async (req, res) => {
       return res.json({ message: 'status updated' });
     }
 
-    return res.status(403).send('failed to update status');
+    return res.status(403).send('Failed to update status');
   } catch (err) {
     signale.fatal('Fatal: failed to update status', err);
 
-    return res.status(500).send('failed to update status');
+    return res.status(500).send('Failed to update status');
   }
 };
 

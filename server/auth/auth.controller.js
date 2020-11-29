@@ -6,7 +6,9 @@ const bcrypt = require('bcryptjs');
 const signale = require('signale');
 
 const User = require('../users/user.modal');
-const sendMail = require('./auth.service');
+const { sendMail } = require('./auth.service');
+
+require('./auth.passport');
 
 const sendResponseOAuth2 = async (req, res, next, err, user, info, errType) => {
   if (!user || err) {
@@ -27,7 +29,11 @@ const sendResponseOAuth2 = async (req, res, next, err, user, info, errType) => {
 };
 
 const sendResponseLocalStrategy = async (req, res, next, err, user, info) => {
-  if (!user || err) {
+  if (err) {
+    return res.status(400).send('Something went wrong');
+  }
+
+  if (!user) {
     return res.status(400).send(info.message);
   }
 
@@ -162,8 +168,13 @@ const resetPassword = async (req, res) => {
   if (password !== rePassword) {
     return res.status(400).send('Passwords must match');
   }
-  Joi.attempt(password, Joi.string().required().min(6).regex(RegExp('^[a-zA-Z0-9]'))
-    .message('You password is week'));
+
+  try {
+    Joi.attempt(password, Joi.string().min(6).regex(RegExp('^[a-zA-Z0-9]*$'))
+      .message('You password is week'));
+  } catch (error) {
+    return res.status(400).send(error.details[0].message);
+  }
 
   try {
     decoded = jwtDecode(token);

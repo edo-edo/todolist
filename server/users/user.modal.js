@@ -15,22 +15,31 @@ const userSchema = new Schema({
   resetPassword: String
 }, { timestamps: true });
 
-userSchema.pre('save', async function save(next) {
-  if (this.provider === 'website') {
-    const hash = await bcrypt.hash(this.password, 10);
-
-    this.password = hash;
+async function preSave(next) {
+  if (this.password) {
+    bcrypt.genSalt(10, (err, salt) => {
+      const hash = bcrypt.hashSync(this.password, salt);
+      this.password = hash;
+    });
   }
 
   next();
-});
+}
 
-async function comparePass(password) {
-  const compare = await bcrypt.compare(password, this.password);
-  return compare;
+async function comparePass(password, callback) {
+  bcrypt.compare(password, this.password, (err, isMatch) => {
+    if (err) {
+      return callback(err);
+    }
+
+    return callback(null, isMatch);
+  });
 }
 
 userSchema.methods.isValidPassword = comparePass;
+userSchema.methods.preSave = preSave;
+
+userSchema.pre('save', preSave);
 
 const userModel = mongoose.model('User', userSchema);
 

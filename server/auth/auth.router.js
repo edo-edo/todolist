@@ -1,6 +1,6 @@
 const { Router } = require('express');
 
-require('./auth.service');
+require('./auth.passport');
 
 const {
   logIn,

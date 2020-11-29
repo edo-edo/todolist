@@ -1,0 +1,33 @@
+.Item{
+  border-radius: 5px;
+  background-color: white;
+  height: 40px;
+  width: 170px;
+  padding-left: 5%;
+  display: flex;
+  margin: 10px;
+  justify-content: space-between;
+  align-items: center;
+  box-shadow: 0px 0px 3px rgba(0,0,0,0.5);
+}
+
+.ItemSecondColimn {
+  background-color: rgb(13, 180, 13);
+}
+
+
+.Item button {
+  color: rgb(223, 0, 0);
+}
+
+.Item H2 {
+  width: 140px;
+  cursor: pointer;
+}
+
+.StatusBar  {
+  border-radius: 5px;
+  width: 30px;
+  height: 20px;
+  background-color: blue;
+}

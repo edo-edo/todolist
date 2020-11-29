@@ -1,61 +1,65 @@
 import React from 'react';
 import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
-import { useParams, useHistory } from 'react-router-dom';
-
 import {
-  Button,
+  IconButton,
   Dialog,
   DialogActions,
   DialogContent,
   DialogContentText,
   DialogTitle
 } from '@material-ui/core';
+import CancelIcon from '@material-ui/icons/Cancel';
+import DeleteIcon from '@material-ui/icons/Delete';
 
 import * as actionTypes from '../../../../storage/constant';
+import classes from './DeleteModal.css';
 
-const DeleteModal = ({ handleClose, onRemoveTask }) => {
-  const { id } = useParams();
-  const history = useHistory();
-  return (
-    <div>
-      <Dialog
-        open
-        onClose={handleClose}
-        aria-labelledby="draggable-dialog-title"
-      >
+const DeleteModal = ({
+  open, handleClose, onRemoveTask
+}) => (
+  <div>
+    <Dialog
+      open={open.status}
+      onClose={handleClose}
+      aria-labelledby="draggable-dialog-title"
+    >
+      <DialogTitle id="draggable-dialog-title">
+        Delete task
+      </DialogTitle>
 
-        <DialogTitle id="draggable-dialog-title">
-          Delete task
-        </DialogTitle>
+      <DialogContent>
+        <DialogContentText>
+          do you want to delete this task?
+        </DialogContentText>
+      </DialogContent>
 
-        <DialogContent>
-          <DialogContentText>
-            do you want to delete this task?
-          </DialogContentText>
-        </DialogContent>
-
-        <DialogActions>
-          <Button autoFocus onClick={handleClose} color="primary">
-            Cancel
-          </Button>
-          <Button
+      <DialogActions>
+        <div className={classes.Cancel}>
+          <IconButton onClick={handleClose} aria-label="cancel">
+            <CancelIcon />
+          </IconButton>
+        </div>
+        <div className={classes.Delete}>
+          <IconButton
             onClick={() => {
-              onRemoveTask(id);
-              history.push('/');
+              onRemoveTask(open.id);
+              handleClose();
             }}
-            variant="contained"
-            color="secondary"
+            aria-label="delete"
           >
-            Delete
-          </Button>
-        </DialogActions>
-      </Dialog>
-    </div>
-  );
-};
+
+            <DeleteIcon />
+          </IconButton>
+        </div>
+
+      </DialogActions>
+    </Dialog>
+  </div>
+);
 
 DeleteModal.propTypes = {
+  open: PropTypes.objectOf(Boolean, String).isRequired,
   onRemoveTask: PropTypes.func.isRequired,
   handleClose: PropTypes.func.isRequired,
 };

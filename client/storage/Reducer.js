@@ -24,6 +24,13 @@ const Reducer = (state = initialState, action) => {
         error: ''
       };
     }
+    case actionTypes.SET_TASKS: {
+      return {
+        ...state,
+        tasks: action.payload.tasks,
+        error: ''
+      };
+    }
     case actionTypes.FETCH_TASKS_FAIL: {
       return {
         ...state,
@@ -34,22 +41,20 @@ const Reducer = (state = initialState, action) => {
     case actionTypes.FETCH_TASK_START: {
       return {
         ...state,
-        loading: true,
-        error: ''
+        error: '',
+        task: {}
       };
     }
     case actionTypes.FETCH_TASK_SUCCESS: {
       return {
         ...state,
         task: action.payload.task,
-        loading: false,
         error: ''
       };
     }
     case actionTypes.FETCH_TASK_FAIL: {
       return {
         ...state,
-        loading: false,
         error: action.payload.message
       };
     }
