@@ -24,9 +24,9 @@ describe('auth Api testing', () => {
   });
 
   jwt.sign = jest.fn().mockReturnValue('test_token');
-  User.prototype.save = jest.fn().mockReturnValue(user);
-  User.findOne = jest.fn().mockReturnValue(null);
-  userValidation.validate = jest.fn().mockReturnValue({ error: null });
+  User.prototype.save = jest.fn().mockResolvedValue(user);
+  User.findOne = jest.fn().mockResolvedValue(null);
+  userValidation.validate = jest.fn().mockResolvedValue({ error: null });
 
   describe('Sign up  Api testing', () => {
     test('sign up user successfully testing', async () => {
@@ -40,7 +40,7 @@ describe('auth Api testing', () => {
     });
 
     test('sign up user already exist testing', async () => {
-      User.findOne = jest.fn().mockReturnValue(user);
+      User.findOne = jest.fn().mockResolvedValue(user);
 
       const response = await request(app)
         .post('/api/auth/signup')
@@ -54,7 +54,7 @@ describe('auth Api testing', () => {
     test('sign up field required testing', async () => {
       const details = [{ message: '"firstName" is required' }];
 
-      userValidation.validate = jest.fn().mockReturnValue({ error: { details } });
+      userValidation.validate = jest.fn().mockResolvedValue({ error: { details } });
 
       const response = await request(app)
         .post('/api/auth/signup')
@@ -66,7 +66,7 @@ describe('auth Api testing', () => {
     });
 
     test('sign up Internal error testing', async () => {
-      userValidation.validate = jest.fn().mockReturnValue({ error: null });
+      userValidation.validate = jest.fn().mockResolvedValue({ error: null });
       User.findOne = jest.fn().mockRejectedValue(new Error());
 
       const response = await request(app)
@@ -82,7 +82,7 @@ describe('auth Api testing', () => {
     test('Log in user successfully testing', async () => {
       const compareMock = jest.fn((pass, callback) => callback(null, true));
 
-      User.findOne = jest.fn().mockReturnValue({ ...user, isValidPassword: compareMock });
+      User.findOne = jest.fn().mockResolvedValue({ ...user, isValidPassword: compareMock });
 
       const response = await request(app)
         .post('/api/auth/login')
@@ -96,7 +96,7 @@ describe('auth Api testing', () => {
     test('Incorect password testing', async () => {
       const compareMock = jest.fn((pass, callback) => callback(null, false));
 
-      User.findOne = jest.fn().mockReturnValue({ ...user, isValidPassword: compareMock });
+      User.findOne = jest.fn().mockResolvedValue({ ...user, isValidPassword: compareMock });
 
       const response = await request(app)
         .post('/api/auth/login')
@@ -108,7 +108,7 @@ describe('auth Api testing', () => {
     });
 
     test('User not found  testing', async () => {
-      User.findOne = jest.fn().mockReturnValue(null);
+      User.findOne = jest.fn().mockResolvedValue(null);
 
       const response = await request(app)
         .post('/api/auth/login')
@@ -134,9 +134,9 @@ describe('auth Api testing', () => {
 
   describe('Forgot password Api testing', () => {
     test('forgot password  successfully testing', async () => {
-      User.findOne = jest.fn().mockReturnValue(user);
+      User.findOne = jest.fn().mockResolvedValue(user);
       nodemailer.createTransport = jest.fn().mockReturnValue({ sendMail: jest.fn() });
-      User.updateOne = jest.fn().mockReturnValue({ nModified: 1 });
+      User.updateOne = jest.fn().mockResolvedValue({ nModified: 1 });
 
       const response = await request(app)
         .post('/api/auth/forgot-password')
@@ -147,7 +147,7 @@ describe('auth Api testing', () => {
     });
 
     test('forgot password  send Error testing', async () => {
-      nodemailer.createTransport = jest.fn().mockReturnValue(
+      nodemailer.createTransport = jest.fn().mockResolvedValue(
         { sendMail: jest.fn().mockRejectedValue(new Error()) }
       );
 
@@ -161,7 +161,7 @@ describe('auth Api testing', () => {
     });
 
     test('forgot password  User not found testing', async () => {
-      User.findOne = jest.fn().mockReturnValue(null);
+      User.findOne = jest.fn().mockResolvedValue(null);
 
       const response = await request(app)
         .post('/api/auth/forgot-password')
@@ -176,8 +176,8 @@ describe('auth Api testing', () => {
   describe('Reset password Api testing', () => {
     test('reset password successfully testing', async () => {
       const strongPassword = 'Password143';
-      User.updateOne = jest.fn().mockReturnValue({ nModified: 1 });
-      User.findOne = jest.fn().mockReturnValue(user);
+      User.updateOne = jest.fn().mockResolvedValue({ nModified: 1 });
+      User.findOne = jest.fn().mockResolvedValue(user);
 
       const response = await request(app)
         .post('/api/auth/reset-password')
@@ -239,7 +239,7 @@ describe('auth Api testing', () => {
 
     test('reset password forbiden testing', async () => {
       const strongPassword = 'Password143';
-      User.updateOne = jest.fn().mockReturnValue({ nModified: 0 });
+      User.updateOne = jest.fn().mockResolvedValue({ nModified: 0 });
 
       const response = await request(app)
         .post('/api/auth/reset-password')

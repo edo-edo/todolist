@@ -21,7 +21,7 @@ describe('task Api test', () => {
 
   describe('test  tasks Api ', () => {
     test('get tasks successfully testing ', async () => {
-      Task.find = jest.fn().mockReturnValue([]);
+      Task.find = jest.fn().mockResolvedValue([]);
 
       const response = await request(app)
         .get('/api/tasks')
@@ -43,9 +43,9 @@ describe('task Api test', () => {
 
   describe('create task Api', () => {
     test('create task successfully testing', async () => {
-      taskValidation.validate = jest.fn().mockReturnValue({ error: null });
+      taskValidation.validate = jest.fn().mockResolvedValue({ error: null });
 
-      Task.create = jest.fn().mockReturnValue(task);
+      Task.create = jest.fn().mockResolvedValue(task);
 
       const response = await request(app)
         .post('/api/tasks')
@@ -57,7 +57,7 @@ describe('task Api test', () => {
     });
 
     test('create task error testing', async () => {
-      taskValidation.validate = jest.fn().mockReturnValue({ error: null });
+      taskValidation.validate = jest.fn().mockResolvedValue({ error: null });
 
       Task.create = jest.fn().mockRejectedValue(new Error());
 
@@ -72,7 +72,7 @@ describe('task Api test', () => {
     test('create task valid error testing', async () => {
       const details = [{ message: '"title" is required' }];
 
-      taskValidation.validate = jest.fn().mockReturnValue({ error: { details } });
+      taskValidation.validate = jest.fn().mockResolvedValue({ error: { details } });
 
       Task.create = jest.fn().mockRejectedValue(new Error());
 
@@ -88,7 +88,7 @@ describe('task Api test', () => {
 
   describe('get task Api', () => {
     test('get task successfully testing', async () => {
-      Task.findOne = jest.fn().mockReturnValue(task);
+      Task.findOne = jest.fn().mockResolvedValue(task);
 
       const response = await request(app)
         .get(`/api/tasks/${task._id}`)
@@ -99,7 +99,7 @@ describe('task Api test', () => {
     });
 
     test('get task forbiden  testing', async () => {
-      Task.findOne = jest.fn().mockReturnValue(null);
+      Task.findOne = jest.fn().mockResolvedValue(null);
 
       const response = await request(app)
         .get(`/api/tasks/${task._id}`)
@@ -121,7 +121,7 @@ describe('task Api test', () => {
 
   describe('update task Api', () => {
     test('update  task successfully testing', async () => {
-      Task.updateOne = jest.fn().mockReturnValue({ nModified: 1 });
+      Task.updateOne = jest.fn().mockResolvedValue({ nModified: 1 });
 
       const response = await request(app)
         .put(`/api/tasks/${task._id}`)
@@ -143,7 +143,7 @@ describe('task Api test', () => {
     });
 
     test('update  task forbiden  testing', async () => {
-      Task.updateOne = jest.fn().mockReturnValue({ nModified: 0 });
+      Task.updateOne = jest.fn().mockResolvedValue({ nModified: 0 });
 
       const response = await request(app)
         .put(`/api/tasks/${task._id}`)
@@ -168,7 +168,7 @@ describe('task Api test', () => {
 
   describe('remove task Api test', () => {
     test('remove  task successfully testing', async () => {
-      Task.deleteOne = jest.fn().mockReturnValue({ deletedCount: 1 });
+      Task.deleteOne = jest.fn().mockResolvedValue({ deletedCount: 1 });
 
       const response = await request(app)
         .delete(`/api/tasks/${task._id}`)
@@ -179,7 +179,7 @@ describe('task Api test', () => {
     });
 
     test('remove  task forbiden testing', async () => {
-      Task.deleteOne = jest.fn().mockReturnValue({ deletedCount: 0 });
+      Task.deleteOne = jest.fn().mockResolvedValue({ deletedCount: 0 });
 
       const response = await request(app)
         .delete(`/api/tasks/${task._id}`)

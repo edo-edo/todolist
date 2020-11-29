@@ -27,9 +27,9 @@ describe('OAuth2 functions  unit testing', () => {
     test('OAuth2 Sign Up successfully testing', async () => {
       const doneMock = jest.fn();
 
-      User.findOne = jest.fn().mockReturnValue(null);
-      userValidation.validate = jest.fn().mockReturnValue({ error: null });
-      User.create = jest.fn().mockReturnValue(user);
+      User.findOne = jest.fn().mockResolvedValue(null);
+      userValidation.validate = jest.fn().mockResolvedValue({ error: null });
+      User.create = jest.fn().mockResolvedValue(user);
 
       await OAuth2SignUpCallback(accessToken, refreshToken, profile, doneMock);
 
@@ -42,7 +42,7 @@ describe('OAuth2 functions  unit testing', () => {
       const details = [{ message: '"lastName" length must be at least 5 characters long' }];
 
       const doneMock = jest.fn();
-      userValidation.validate = jest.fn().mockReturnValue({ error: { details } });
+      userValidation.validate = jest.fn().mockResolvedValue({ error: { details } });
 
       await OAuth2SignUpCallback(accessToken, refreshToken, {
         provider: profile.provider,
@@ -62,8 +62,8 @@ describe('OAuth2 functions  unit testing', () => {
     test('OAuth2 Sign Up user already exists  testing', async () => {
       const doneMock = jest.fn();
 
-      User.findOne = jest.fn().mockReturnValue(user);
-      userValidation.validate = jest.fn().mockReturnValue({ error: null });
+      User.findOne = jest.fn().mockResolvedValue(user);
+      userValidation.validate = jest.fn().mockResolvedValue({ error: null });
 
       await OAuth2SignUpCallback(accessToken, refreshToken, profile, doneMock);
 
@@ -77,7 +77,7 @@ describe('OAuth2 functions  unit testing', () => {
       const doneMock = jest.fn();
 
       User.findOne = jest.fn().mockRejectedValue(new Error());
-      userValidation.validate = jest.fn().mockReturnValue({ error: null });
+      userValidation.validate = jest.fn().mockResolvedValue({ error: null });
 
       await OAuth2SignUpCallback(accessToken, refreshToken, profile, doneMock);
 
@@ -90,7 +90,7 @@ describe('OAuth2 functions  unit testing', () => {
     test('OAuth2 Log In successfully testing', async () => {
       const doneMock = jest.fn();
 
-      User.findOne = jest.fn().mockReturnValue(user);
+      User.findOne = jest.fn().mockResolvedValue(user);
 
       await OAuth2LogInCallback(accessToken, refreshToken, profile, doneMock);
 
@@ -102,7 +102,7 @@ describe('OAuth2 functions  unit testing', () => {
     test('OAuth2 Log In user not found', async () => {
       const doneMock = jest.fn();
 
-      User.findOne = jest.fn().mockReturnValue(null);
+      User.findOne = jest.fn().mockResolvedValue(null);
 
       await OAuth2LogInCallback(accessToken, refreshToken, profile, doneMock);
 
