@@ -21,7 +21,12 @@ const sendResponseOAuth2 = async (req, res, next, err, user, info, errType) => {
     }
 
     const body = { _id: user._id, firstName: user.firstName };
-    const token = jwt.sign({ user: body }, process.env.JWT_KEY);
+    const token = jwt.sign(
+      {
+        exp: Math.floor(Date.now() / 1000) + (60 * 60),
+        user: body
+      }, process.env.JWT_KEY
+    );
 
     return res.redirect(`/?token=${token}`);
   });
@@ -43,7 +48,12 @@ const sendResponseLocalStrategy = async (req, res, next, err, user, info) => {
     }
 
     const body = { _id: user._id, firstName: user.firstName };
-    const token = jwt.sign({ user: body }, process.env.JWT_KEY);
+    const token = jwt.sign(
+      {
+        exp: Math.floor(Date.now() / 1000) + (60 * 60),
+        user: body
+      }, process.env.JWT_KEY
+    );
 
     return res.json({ token: `Bearer ${token}` });
   });

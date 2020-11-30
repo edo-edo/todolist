@@ -7,12 +7,14 @@ import Navigation from './Component/Navigation/Navigation';
 import * as actionTypes from './storage/constant';
 import Home from './Component/Home/Home';
 
-const App = ({ setCurrentUser, setCurrentUserError, isAuthenticated }) => {
+const App = ({
+  setCurrentUser, setCurrentUserError, isAuthenticated, logOut
+}) => {
   useEffect(() => {
     try {
       if (localStorage.jwtToken) {
         const token = localStorage.jwtToken;
-        setCurrentUser(token);
+        setCurrentUser(token, logOut);
       }
     } catch (error) {
       setCurrentUserError('Unauthorized');
@@ -29,7 +31,8 @@ const App = ({ setCurrentUser, setCurrentUserError, isAuthenticated }) => {
 App.propTypes = {
   isAuthenticated: PropTypes.bool.isRequired,
   setCurrentUser: PropTypes.func.isRequired,
-  setCurrentUserError: PropTypes.func.isRequired
+  setCurrentUserError: PropTypes.func.isRequired,
+  logOut: PropTypes.func.isRequired,
 };
 
 const mapStateToProps = ({ userReducer: state }) => ({
@@ -37,6 +40,7 @@ const mapStateToProps = ({ userReducer: state }) => ({
 });
 
 const mapDispatchToProps = dispatch => ({
+  logOut: () => dispatch({ type: actionTypes.LOG_OUT }),
   setCurrentUser: token => dispatch({
     type: actionTypes.LOG_IN_SUCCESS,
     payload: { token }

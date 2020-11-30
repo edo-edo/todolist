@@ -1,12 +1,17 @@
 import axios from 'axios';
 import jwtDecode from 'jwt-decode';
 
-const setAuthToken = token => {
+const setAuthToken = (token, logOut) => {
   if (token) {
+    const decoded = jwtDecode(token);
+    if (Date.now() >= decoded.exp * 1000) {
+      delete axios.defaults.headers.common.Authorization;
+      logOut();
+      return false;
+    }
+
     axios.defaults.headers.common.Authorization = token;
     localStorage.setItem('jwtToken', token);
-
-    const decoded = jwtDecode(token);
     const { _id, firstName } = decoded.user;
 
     return { _id, firstName };
